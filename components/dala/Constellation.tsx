@@ -567,7 +567,7 @@ export function ConstellationBox({
 }
 
 /** Campo de triângulos soltos sobre a página inteira, bem discreto. */
-export function AmbientField({ palette = PALETTE_ID, count = 140 }: { palette?: string[]; count?: number }) {
+export function AmbientField({ palette = PALETTE_ID, count = 80 }: { palette?: string[]; count?: number }) {
   const host = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = host.current;

@@ -5,6 +5,7 @@ import { AmbientField } from '@/components/dala/Constellation';
 import { Header } from '@/components/site/Header';
 import { Hero } from '@/components/site/Hero';
 import { HeroPalco } from '@/components/site/HeroPalco';
+import { HeroSimples } from '@/components/site/HeroSimples';
 import { Numbers } from '@/components/site/Numbers';
 import { Editions, Edition2026, Guests, PastSponsors } from '@/components/site/History';
 import { Gallery } from '@/components/site/Gallery';
@@ -50,7 +51,7 @@ export async function SitePage({ variant = 'claro' }: { variant?: 'claro' | 'pal
       </a>
       <Header marquee={lines(s.marquee_items)} />
       <main>
-        {variant === 'palco' ? <HeroPalco s={s} /> : <Hero s={s} fx={fx} />}
+        {variant === 'palco' ? <HeroPalco s={s} /> : fx ? <HeroSimples s={s} /> : <Hero s={s} />}
         <Numbers metrics={data.metrics} fx={fx} />
         <Editions editions={data.editions} />
         <Edition2026 s={s} sessions={data.sessions} experiences={data.experiences} />
