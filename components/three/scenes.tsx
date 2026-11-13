@@ -44,7 +44,7 @@ export function HeroScene({ still, compact, paused = false, logoOnly = false }: 
         <Parallax still={still}>
           <Float speed={1.2 * f} rotationIntensity={0.15 * f} floatIntensity={0.4 * f}>
             <group position={[0, compact ? 0.3 : 0, 0]}>
-              <Logotype3D width={logoOnly ? (compact ? 5.2 : 9.4) : compact ? 4.4 : 6.8} />
+              <Logotype3D width={logoOnly ? (compact ? 5.2 : 9.4) : compact ? 4.4 : 6.8} {...(logoOnly ? { color: '#FFFFFF', metal: 0.12 } : {})} />
             </group>
           </Float>
           {!compact && !logoOnly && (

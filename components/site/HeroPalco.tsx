@@ -70,7 +70,7 @@ export function HeroPalco({ s }: { s: Record<string, string> }) {
           logoOnly
           fallback={
             <div className="flex h-full items-center justify-center">
-              <span className="logotype block w-[min(86vw,820px)]" />
+              <span className="logotype block w-[min(86vw,820px)] !text-white" />
             </div>
           }
         />

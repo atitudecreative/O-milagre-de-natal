@@ -33,7 +33,7 @@ function displayFont() {
 
 /* ---------------- Logotipo 2026 extrudado e "inflado" ---------------- */
 
-export function Logotype3D({ width = 6, color = C.ouro }: { width?: number; color?: string }) {
+export function Logotype3D({ width = 6, color = C.ouro, metal = 0.75 }: { width?: number; color?: string; metal?: number }) {
   const data = useLoader(SVGLoader, '/media/logotipo.svg');
   const geometry = useMemo(() => {
     const shapes = data.paths.flatMap((p) => SVGLoader.createShapes(p));
@@ -56,7 +56,7 @@ export function Logotype3D({ width = 6, color = C.ouro }: { width?: number; colo
   useEffect(() => () => geometry.dispose(), [geometry]);
   return (
     <mesh geometry={geometry}>
-      <meshStandardMaterial color={color} metalness={0.75} roughness={0.3} side={THREE.DoubleSide} />
+      <meshStandardMaterial color={color} metalness={metal} roughness={metal < 0.3 ? 0.42 : 0.3} side={THREE.DoubleSide} />
     </mesh>
   );
 }
