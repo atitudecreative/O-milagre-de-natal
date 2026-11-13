@@ -16,6 +16,13 @@ export default {
         ouro: '#E8B23A',
         picadeiro: '#F26A1B',
         palco: '#140C0A',
+        // versão ORYZO (escuro editorial)
+        walnut: '#100904',
+        bark: '#382416',
+        cork: '#40372E',
+        driftwood: '#6C5F51',
+        brasa: '#DC5000',
+        warm: '#FFEDD7',
         // tokens antigos (painel administrativo)
         night: '#08070A',
         ink: '#100D11',

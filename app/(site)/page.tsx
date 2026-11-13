@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { getSiteData, siteUrl } from '@/lib/content';
 import { lines, whatsappLink } from '@/lib/format';
-import type { Row } from '@/lib/schema';
+import { placementsFrom } from '@/lib/placements';
 import { Header } from '@/components/site/Header';
 import { Hero } from '@/components/site/Hero';
 import { Numbers } from '@/components/site/Numbers';
@@ -37,17 +37,6 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: { card: 'summary_large_image', title: s.seo_title, description: s.seo_description, images: [og] },
     robots: { index: true, follow: true },
-  };
-}
-
-/** Em quais cotas cada aplicação de marca está prevista (lido das contrapartidas cadastradas). */
-function placementsFrom(tiers: Row[]) {
-  const has = (re: RegExp) => tiers.filter((t) => re.test(`${t.benefits ?? ''}\n${t.deliverables ?? ''}`)).map((t) => String(t.name));
-  return {
-    led: has(/tel[aã]o|led/i),
-    vip: has(/[áa]rea vip|sala vip/i),
-    materiais: has(/materiais oficiais|stand/i),
-    pipoca: has(/pipoca/i),
   };
 }
 

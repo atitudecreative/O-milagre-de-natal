@@ -111,3 +111,72 @@ details > summary::-webkit-details-marker { display: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
 .tabular { font-variant-numeric: tabular-nums; }
+
+/* ================================================================== */
+/* Versão ORYZO — escuro editorial (DESIGN1.md)                        */
+/* Tudo em caixa alta 500; só o texto descritivo é misto/400.          */
+/* ================================================================== */
+.oryzo {
+  background: #100904;
+  color: #ffedd7;
+  font-feature-settings: 'ss01';
+  font-weight: 500;
+}
+.oryzo ::selection { background: #ffedd7; color: #100904; }
+.oryzo :focus-visible { outline-color: #ffedd7; }
+.oryzo input, .oryzo textarea { caret-color: #dc5000; }
+
+.o-up { text-transform: uppercase; font-weight: 500; letter-spacing: 0; }
+.o-label { text-transform: uppercase; font-weight: 500; font-size: 12px; line-height: 1.2; }
+.o-micro { text-transform: uppercase; font-weight: 500; font-size: 10px; line-height: 1.2; }
+.o-display { text-transform: uppercase; font-weight: 500; font-size: clamp(34px, 4.2vw, 51px); line-height: 0.9; }
+.o-heading { text-transform: uppercase; font-weight: 500; font-size: clamp(28px, 3.4vw, 41px); line-height: 0.9; }
+.o-sub { text-transform: uppercase; font-weight: 500; font-size: clamp(18px, 1.7vw, 24px); line-height: 1.09; }
+.o-body { font-weight: 400; font-size: clamp(20px, 2vw, 29px); line-height: 1.26; text-transform: none; }
+.o-text { font-weight: 400; font-size: 17px; line-height: 1.45; text-transform: none; }
+.o-dash { border-color: #40372e; border-style: dashed; }
+.o-grade { filter: sepia(0.18) saturate(0.92) contrast(1.06) brightness(0.92); }
+
+.o-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  border-radius: 36px; background: #382416; color: #ffedd7;
+  padding: 14px 24px; font-size: 13px; font-weight: 500; text-transform: uppercase; white-space: nowrap;
+  transition: transform 160ms var(--ease-out), background-color 200ms var(--ease-out);
+}
+.o-btn:hover { background: #4a311f; }
+.o-btn:active { transform: scale(0.97); }
+.o-ghost {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: 22.5px; border: 1px solid #ffedd7; color: #ffedd7; background: transparent;
+  padding: 8px 18px; font-size: 12px; font-weight: 500; text-transform: uppercase; white-space: nowrap;
+  transition: transform 160ms var(--ease-out), background-color 200ms var(--ease-out), color 200ms var(--ease-out);
+}
+.o-ghost:hover { background: #ffedd7; color: #100904; }
+.o-ghost:active { transform: scale(0.97); }
+.o-link { text-transform: uppercase; font-weight: 500; font-size: 12px; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: #6c5f51; }
+.o-link:hover { text-decoration-color: #ffedd7; }
+
+/* componentes compartilhados (formulários) recebem o vocabulário ORYZO */
+.oryzo .field {
+  border-radius: 0; border: 0; border-bottom: 1px solid #ffedd7; background: transparent; color: #ffedd7;
+  padding: 10px 2px; box-shadow: none;
+}
+.oryzo .field::placeholder { color: rgb(255 237 215 / 0.35); }
+.oryzo .field:focus { box-shadow: none; border-bottom-color: #dc5000; }
+.oryzo select.field option { background: #100904; }
+.oryzo .field-label { color: rgb(255 237 215 / 0.6); font-weight: 500; letter-spacing: 0; font-size: 12px; }
+.oryzo .pill { border-radius: 22.5px; letter-spacing: 0; font-weight: 500; }
+.oryzo .pill-solid { background: #382416; border-color: #382416; color: #ffedd7; border-radius: 36px; }
+.oryzo .pill-solid:hover { background: #4a311f; border-color: #4a311f; }
+.oryzo .pill-ghost { background: transparent; border-color: #ffedd7; color: #ffedd7; }
+.oryzo .pill-ghost:hover { background: #ffedd7; color: #100904; }
+.oryzo .card { background: transparent; border-color: #40372e; border-radius: 12px; }
+.oryzo .bg-menta { background: #382416; }
+.oryzo .text-cortina { color: #dc5000; }
+.oryzo [class*='text-carbon'] { color: rgb(255 237 215 / 0.75); }
+.oryzo .text-carbon { color: #ffedd7; }
+.oryzo .display { font-family: var(--font-sans); font-weight: 500; letter-spacing: 0; }
+.oryzo input[type='checkbox'] { accent-color: #dc5000; }
+
+body:has(.oryzo) { background: #100904; }
+html:has(.oryzo) { scrollbar-color: #6c5f51 #100904; }
