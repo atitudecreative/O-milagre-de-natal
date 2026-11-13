@@ -1,7 +1,7 @@
 import type { Row } from '@/lib/schema';
 import { compactNumber, cx } from '@/lib/format';
 import { Counter } from './motion';
-import { H2, Sticker } from './ui';
+import { Accent, Edge, Floater, H2, HEX, Seal } from './ui';
 
 export function DemoBadge({ className }: { className?: string }) {
   return (
@@ -28,50 +28,49 @@ function Value({ m, className }: { m: Row; className?: string }) {
   );
 }
 
-const FILLS = ['bg-cortina text-white', 'bg-white', 'bg-turquesa text-white', 'bg-pinheiro text-white', 'bg-picadeiro'];
+// selos espalhados: cor, giro e deslocamento vertical de cada um
+const SEALS = [
+  { fill: '#E8B23A', r: -6, y: 'lg:translate-y-6', text: '' },
+  { fill: '#D2381F', r: 5, y: 'lg:-translate-y-4', text: 'text-white' },
+  { fill: '#FFFFFF', r: -3, y: 'lg:translate-y-10', text: '' },
+  { fill: '#1FA3A0', r: 7, y: 'lg:translate-y-0', text: 'text-white' },
+  { fill: '#0E5A3A', r: -5, y: 'lg:translate-y-8', text: 'text-white' },
+];
 
 export function Numbers({ metrics }: { metrics: Row[] }) {
   if (!metrics.length) return null;
-  const [lead, second, ...rest] = metrics;
+  const [lead, ...rest] = metrics;
   return (
-    <section id="numeros" className="relative overflow-hidden border-y border-carbon bg-creme py-20 sm:py-28">
+    <section id="numeros" className="swirl sw-denso relative bg-creme py-20 sm:py-28" style={{ ['--sw' as string]: '#EBCF8E' }}>
+      <Edge color={HEX.creme} kind="wave" />
       <div className="wrap">
-        <H2 className="max-w-[14ch]">Um sucesso que só cresce.</H2>
-
-        {/* número-escultura */}
-        <div className="relative mt-10 sm:mt-14">
+        <Accent>um sucesso que só cresce</Accent>
+        <div className="relative mt-4">
           <Value m={lead} className="text-[24vw] leading-[0.78] sm:text-[19vw] lg:text-[232px]" />
-          <p className="mt-4 max-w-md text-xl font-bold leading-tight sm:text-2xl">{String(lead.label)}</p>
-          {lead.note ? <p className="mt-2 text-sm font-medium text-carbon/60">{String(lead.note)}</p> : null}
-          <Sticker src="/media/v2/adesivos/cantora-dourada.webp" r={7} className="right-[2%] top-[-18%] hidden h-[300px] lg:block" />
+          <H2 as="p" className="mt-4 max-w-[18ch] !text-[30px] sm:!text-[44px]">
+            {String(lead.label)}
+          </H2>
+          {lead.note ? <p className="mt-2 text-sm font-medium text-carbon/60">Fonte: {String(lead.note)}</p> : null}
+          <Floater src="/media/v2/recortes/acrobata-seda-dir.webp" r={8} className="right-[4%] top-[-6%] hidden h-[260px] lg:block" />
         </div>
 
-        <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-12">
-          {second && (
-            <div className="card relative flex flex-col justify-between bg-ouro p-7 sm:col-span-2 lg:col-span-5 lg:row-span-2 lg:p-10">
-              <Value m={second} className="text-[18vw] leading-[0.8] sm:text-[104px] lg:text-[112px]" />
-              <div className="mt-8">
-                <p className="text-xl font-bold leading-tight">{String(second.label)}</p>
-                {second.note ? <p className="mt-1 text-sm font-medium opacity-70">{String(second.note)}</p> : null}
-              </div>
-            </div>
-          )}
-          {rest.map((m, i) => (
-            <div
-              key={m.id}
-              className={cx('card flex flex-col justify-between p-6 lg:p-8', m.status === 'demo' ? 'bg-white' : FILLS[i % FILLS.length], i < 2 ? 'lg:col-span-7' : rest.length - 2 === 2 ? 'lg:col-span-6' : 'lg:col-span-4')}
-            >
-              <Value m={m} className="text-[72px] leading-[0.85] lg:text-[96px]" />
-              <div className="mt-6">
-                <p className="text-lg font-bold leading-tight">{String(m.label)}</p>
-                <div className="mt-1 flex flex-wrap items-center gap-2">
-                  {m.status === 'demo' && <DemoBadge />}
-                  {m.note ? <p className="text-sm font-medium opacity-75">{String(m.note)}</p> : null}
+        <ul className="mt-14 flex flex-wrap items-start justify-center gap-x-2 gap-y-4 sm:gap-x-4 lg:justify-between">
+          {rest.map((m, i) => {
+            const s = SEALS[i % SEALS.length];
+            return (
+              <li key={m.id} className={cx('w-[47%] sm:w-[31%] lg:w-[19%]', s.y)}>
+                <div style={{ transform: `rotate(${s.r}deg)` }}>
+                <Seal fill={m.status === 'demo' ? '#FFFFFF' : s.fill} className={cx('w-full', s.text)}>
+                  <Value m={m} className={cx('leading-[0.85]', m.compact || String(m.value ?? '').length > 3 ? 'text-[clamp(28px,6vw,44px)]' : 'text-[clamp(40px,9vw,72px)]')} />
+                  <p className="mt-2 text-[12px] font-bold leading-tight sm:text-[13px]">{String(m.label)}</p>
+                  {m.status === 'demo' && <DemoBadge className="mt-2" />}
+                </Seal>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
+                {m.note ? <p className="mx-auto mt-2 max-w-[90%] text-center text-[12px] font-medium text-carbon/60">{String(m.note)}</p> : null}
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );

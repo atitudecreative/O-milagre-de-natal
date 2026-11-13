@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { track } from '@/lib/track';
 import { cx } from '@/lib/format';
 import { BrandStage } from './Stage3D';
+import { Accent, Edge, HEX } from './ui';
 
 export type Placement = { key: string; tiers: string[] };
 
@@ -39,11 +40,13 @@ export function BrandMockups({ placements }: { placements: Record<string, string
   }, [shown]);
 
   return (
-    <section id="sua-marca" className="relative overflow-hidden border-y border-carbon bg-menta py-20 sm:py-28">
+    <section id="sua-marca" className="swirl sw-leve relative bg-pessego py-20 sm:py-28" style={{ ['--sw' as string]: '#EDC3A6' }}>
+      <Edge color={HEX.pessego} kind="wave" />
       <div className="wrap">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
           <div className="lg:col-span-5">
-            <h2 className="display text-balance text-[44px] sm:text-[72px] lg:text-[88px]">Imagine sua marca aqui.</h2>
+            <Accent>experimente</Accent>
+            <h2 className="display mt-2 text-balance text-[44px] sm:text-[72px] lg:text-[88px]">Imagine sua marca aqui.</h2>
             <p className="mt-5 max-w-md text-lg font-medium leading-relaxed text-carbon/80">
               Digite o nome da sua empresa e veja como ela aparece no musical: no balde de pipoca, no ingresso VIP, no telão de LED e no backdrop.
             </p>
@@ -72,7 +75,7 @@ export function BrandMockups({ placements }: { placements: Record<string, string
 
           {/* mockup 3D */}
           <div className="relative lg:col-span-7">
-            <div className="card relative aspect-[4/3] overflow-hidden bg-papel">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[999px_999px_48px_48px] border border-carbon bg-papel">
               <BrandStage
                 brand={shown}
                 fallback={
@@ -91,7 +94,7 @@ export function BrandMockups({ placements }: { placements: Record<string, string
         <div className="mt-12 grid gap-3 lg:grid-cols-12">
           {/* Telão de LED */}
           <div className="lg:col-span-7">
-            <div className="card relative aspect-[16/9] overflow-hidden bg-palco">
+            <div className="relative aspect-[16/9] -rotate-1 overflow-hidden rounded-[48px] border border-carbon bg-palco">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/media/v2/palco-confete.webp" alt="" className="absolute inset-0 h-full w-full object-cover opacity-80" loading="lazy" />
               <div className="absolute left-1/2 top-[14%] flex h-[46%] w-[58%] -translate-x-1/2 flex-col items-center justify-center rounded-md border-4 border-carbon bg-carbon px-4 text-white">
@@ -112,7 +115,7 @@ export function BrandMockups({ placements }: { placements: Record<string, string
 
           {/* Credencial VIP */}
           <div className="lg:col-span-5">
-            <div className="card relative flex aspect-[16/9] items-center justify-center overflow-hidden bg-ouro lg:aspect-auto lg:h-[calc(100%-52px)]">
+            <div className="relative flex aspect-[16/9] rotate-1 items-center justify-center overflow-hidden rounded-full border border-carbon bg-ouro lg:aspect-auto lg:h-[calc(100%-52px)]">
               <div className="absolute left-1/2 top-0 h-[22%] w-10 -translate-x-1/2 border-x border-carbon bg-cortina" aria-hidden />
               <div className="relative mt-[12%] w-[46%] min-w-[180px] rotate-[-4deg] rounded-[18px] border border-carbon bg-white p-4 text-center">
                 <span className="mx-auto -mt-1 mb-3 block h-3 w-10 rounded-full border border-carbon bg-papel" aria-hidden />
@@ -130,7 +133,7 @@ export function BrandMockups({ placements }: { placements: Record<string, string
 
           {/* Backdrop */}
           <div className="lg:col-span-12">
-            <div className="card relative h-[260px] overflow-hidden bg-white sm:h-[320px]">
+            <div className="relative h-[260px] overflow-hidden rounded-[999px] border border-carbon bg-white sm:h-[320px]">
               <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 sm:grid-cols-6" aria-hidden>
                 {Array.from({ length: 18 }).map((_, i) => (
                   <div key={i} className={cx('flex items-center justify-center border-b border-r border-carbon/10 px-3', (i + Math.floor(i / 6)) % 2 ? 'bg-white' : 'bg-papel')}>
@@ -139,7 +142,7 @@ export function BrandMockups({ placements }: { placements: Record<string, string
                 ))}
               </div>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/media/v2/adesivos/cartola-verde.webp" alt="" className="absolute bottom-0 right-[6%] h-[92%] rotate-[3deg]" loading="lazy" />
+              <img src="/media/v2/recortes/cartola-verde.webp" alt="" className="absolute bottom-0 right-[10%] h-[88%]" loading="lazy" />
             </div>
             <div className="flex items-baseline justify-between gap-4">
               <p className="display mt-3 text-2xl">Backdrop e materiais oficiais</p>

@@ -180,3 +180,51 @@ details > summary::-webkit-details-marker { display: none; }
 
 body:has(.oryzo) { background: #100904; }
 html:has(.oryzo) { scrollbar-color: #6c5f51 #100904; }
+
+/* ================================================================== */
+/* Refino 2024: arabescos, molduras e bordas orgânicas                 */
+/* ================================================================== */
+.serif { font-family: var(--font-serif), Georgia, serif; font-style: italic; font-weight: 900; letter-spacing: -0.02em; }
+
+/* camada de arabescos: a cor vem de --sw (padrão: khaki da ID 2024) */
+.swirl { position: relative; isolation: isolate; }
+.swirl::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: var(--sw, #d6cca3);
+  -webkit-mask: var(--sw-img, url('/media/v2/bg/arabesco-a.svg')) center / cover no-repeat;
+  mask: var(--sw-img, url('/media/v2/bg/arabesco-a.svg')) center / cover no-repeat;
+  opacity: var(--sw-o, 1);
+}
+.sw-a { --sw-img: url('/media/v2/bg/arabesco-a.svg'); }
+.sw-b { --sw-img: url('/media/v2/bg/arabesco-b.svg'); }
+.sw-c { --sw-img: url('/media/v2/bg/arabesco-c.svg'); }
+.sw-denso { --sw-img: url('/media/v2/bg/arabesco-denso.svg'); }
+.sw-leve { --sw-img: url('/media/v2/bg/arabesco-leve.svg'); }
+.sw-vert { --sw-img: url('/media/v2/bg/arabesco-vertical.svg'); }
+@media (max-width: 767px) { .swirl::before { -webkit-mask-image: url('/media/v2/bg/arabesco-vertical.svg'); mask-image: url('/media/v2/bg/arabesco-vertical.svg'); } }
+
+.divisor {
+  display: block; height: 34px; width: min(420px, 80%); background: currentColor;
+  -webkit-mask: url('/media/v2/bg/divisor.svg') center / contain no-repeat;
+  mask: url('/media/v2/bg/divisor.svg') center / contain no-repeat;
+}
+
+/* janela em arco (vitral 2026) */
+.arch-frame { border-radius: 999px 999px 0 0; }
+
+/* ingresso: recortes laterais + picote */
+.ticket {
+  --notch: 18px;
+  -webkit-mask: radial-gradient(circle var(--notch) at 0 62%, #0000 98%, #000) left / 51% 100% no-repeat,
+                radial-gradient(circle var(--notch) at 100% 62%, #0000 98%, #000) right / 51% 100% no-repeat;
+  mask: radial-gradient(circle var(--notch) at 0 62%, #0000 98%, #000) left / 51% 100% no-repeat,
+        radial-gradient(circle var(--notch) at 100% 62%, #0000 98%, #000) right / 51% 100% no-repeat;
+}
+
+/* foto como impressão colada: papel, fita e leve rotação */
+.print { background: #fff; padding: 10px 10px 14px; border: 1px solid #0b0b0b; transition: transform 300ms var(--ease-out); }
+.print:hover { transform: rotate(0deg) scale(1.02) !important; z-index: 2; }
+.tape { position: absolute; top: -12px; left: 50%; width: 88px; height: 24px; transform: translateX(-50%) rotate(-3deg); background: rgba(232, 178, 58, 0.75); border: 1px solid rgba(11, 11, 11, 0.25); }
+
+@keyframes float-y { 0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); } 50% { transform: translateY(-10px) rotate(var(--r, 0deg)); } }
+.floaty { animation: float-y 6s ease-in-out infinite; }

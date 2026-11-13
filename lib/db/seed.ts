@@ -256,6 +256,7 @@ export async function seedDatabase(db: Db) {
 
   const version = Number((await db.getSettings()).seed_version || 1);
   if (version < 2) await upgradeV2(db);
+  if (version < 3) await upgradeV3(db);
 
   if ((await db.count('users')) === 0) {
     const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
@@ -370,4 +371,22 @@ async function upgradeV2(db: Db) {
   }
   await db.setSettings(patch);
   console.info('[seed] Conteúdo atualizado para a versão 2 (histórico 2024–2026).');
+}
+
+/* v3 — fotos melhores nas experiências (as antigas eram faixas de baixa resolução) */
+const V3_EXPERIENCE_IMAGES: Record<string, string> = {
+  '/media/presepio-elenco.webp': '/media/presepio-lua.webp',
+  '/media/coral.webp': '/media/v2/cenario-relogio.webp',
+  '/media/elenco-close.webp': '/media/v2/figurino.webp',
+  '/media/palco-faiscas.webp': '/media/v2/projecao.webp',
+  '/media/familias-close.webp': '/media/v2/palco-confete.webp',
+};
+
+async function upgradeV3(db: Db) {
+  for (const e of await db.list('experiences')) {
+    const next = V3_EXPERIENCE_IMAGES[String(e.image)];
+    if (next) await db.update('experiences', e.id, { image: next });
+  }
+  await db.setSettings({ seed_version: '3' });
+  console.info('[seed] Conteúdo atualizado para a versão 3 (fotos das experiências).');
 }

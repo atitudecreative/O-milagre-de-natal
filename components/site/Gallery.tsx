@@ -5,13 +5,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { Row } from '@/lib/schema';
 import { cx } from '@/lib/format';
+import { Accent, Edge, HEX } from './ui';
 
-const SPAN: Record<string, string> = {
-  hero: 'sm:col-span-4 sm:row-span-2',
-  wide: 'sm:col-span-4',
-  tall: 'sm:col-span-2 sm:row-span-2',
-  square: 'sm:col-span-2',
-};
 
 function embedUrl(url: string) {
   const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([\w-]{6,})/);
@@ -49,10 +44,14 @@ export function Gallery({ items }: { items: Row[] }) {
   const video = cur?.video_url ? String(cur.video_url) : '';
 
   return (
-    <section id="espetaculo" className="relative overflow-hidden bg-papel py-20 sm:py-28">
+    <section id="espetaculo" className="swirl sw-c relative bg-menta py-20 sm:py-28" style={{ ['--sw' as string]: '#B5DCD2' }}>
+      <Edge color={HEX.menta} kind="wave" />
       <div className="wrap">
         <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
-          <h2 className="display max-w-[12ch] text-balance text-[44px] sm:text-[72px] lg:text-[104px]">Um espetáculo de verdade.</h2>
+          <div>
+            <Accent>luz, cenário e emoção</Accent>
+            <h2 className="display mt-2 max-w-[12ch] text-balance text-[44px] sm:text-[72px] lg:text-[104px]">Um espetáculo de verdade.</h2>
+          </div>
           <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 lg:mx-0 lg:flex-wrap lg:justify-end lg:px-0" role="tablist" aria-label="Filtrar galeria">
             {categories.map((c) => (
               <button
@@ -68,30 +67,38 @@ export function Gallery({ items }: { items: Row[] }) {
           </div>
         </div>
 
-        <motion.div layout className="mt-12 grid grid-flow-row-dense auto-rows-[240px] grid-cols-1 gap-3 sm:auto-rows-[210px] sm:grid-cols-8 lg:auto-rows-[250px]">
+        {/* impressões coladas em colunas: cada foto na proporção original, sem corte */}
+        <motion.ul layout className="mt-14 columns-1 gap-6 sm:columns-2 lg:columns-3">
           <AnimatePresence mode="popLayout">
             {list.map((it, i) => (
-              <motion.button
+              <motion.li
                 layout
                 key={it.id}
-                type="button"
-                onClick={() => setOpen(i)}
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.97 }}
                 transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-                className={cx('group card relative overflow-hidden text-left', SPAN[String(it.size)] ?? SPAN.square)}
-                aria-label={`Ampliar: ${String(it.caption)}`}
+                className="mb-8 break-inside-avoid"
               >
-                <Image src={String(it.media)} alt={String(it.caption)} fill sizes="(max-width:640px) 100vw, 50vw" className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]" />
-                <span className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-3">
-                  <span className="rounded-full border border-carbon bg-white px-3.5 py-1.5 text-[13px] font-bold">{String(it.caption)}</span>
-                  {it.video_url ? <span className="flex h-10 w-10 items-center justify-center rounded-full border border-carbon bg-ouro">▶</span> : null}
-                </span>
-              </motion.button>
+                <button
+                  type="button"
+                  onClick={() => setOpen(i)}
+                  className="print group relative block w-full text-left"
+                  style={{ transform: `rotate(${[-1.6, 1.2, -0.6, 1.8, -1.2][i % 5]}deg)` }}
+                  aria-label={`Ampliar: ${String(it.caption)}`}
+                >
+                  {i % 3 === 0 && <span className="tape" aria-hidden />}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={String(it.media)} alt={String(it.caption)} loading="lazy" decoding="async" className="block h-auto w-full" />
+                  <span className="flex items-center justify-between gap-3 px-1 pt-2.5">
+                    <span className="text-[14px] font-bold leading-tight">{String(it.caption)}</span>
+                    {it.video_url ? <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-carbon bg-ouro text-xs">▶</span> : null}
+                  </span>
+                </button>
+              </motion.li>
             ))}
           </AnimatePresence>
-        </motion.div>
+        </motion.ul>
       </div>
 
       <AnimatePresence>

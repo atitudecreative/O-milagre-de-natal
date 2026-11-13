@@ -1,4 +1,5 @@
 import { TrackLink } from './motion';
+import { Edge, HEX } from './ui';
 
 export function Footer({ s, whatsapp }: { s: Record<string, string>; whatsapp: string | null }) {
   const socials = [
@@ -9,7 +10,8 @@ export function Footer({ s, whatsapp }: { s: Record<string, string>; whatsapp: s
     ['Site', s.site_url],
   ].filter(([, u]) => u);
   return (
-    <footer className="bg-carbon pb-28 pt-16 text-papel sm:pb-10">
+    <footer className="swirl sw-a relative bg-carbon pb-28 pt-16 text-papel sm:pb-10" style={{ ['--sw' as string]: '#1A1714' }}>
+      <Edge color={HEX.carbon} kind="scallop" />
       <div className="wrap">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">

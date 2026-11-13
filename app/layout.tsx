@@ -4,6 +4,7 @@ import './globals.css';
 
 // Fontes embutidas no projeto (OFL): o build não depende do Google Fonts.
 const display = localFont({ src: './fonts/BowlbyOne-latin.woff2', weight: '400', variable: '--font-display', display: 'swap' });
+const serif = localFont({ src: './fonts/Fraunces-BlackItalic-latin.woff2', weight: '900', style: 'italic', variable: '--font-serif', display: 'swap' });
 const sans = localFont({ src: './fonts/InterTight-latin.woff2', weight: '100 900', variable: '--font-sans', display: 'swap' });
 
 export const metadata: Metadata = {
@@ -19,7 +20,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={`${display.variable} ${sans.variable}`}>
+    <html lang="pt-BR" className={`${display.variable} ${sans.variable} ${serif.variable}`}>
       <body className="font-sans">{children}</body>
     </html>
   );
