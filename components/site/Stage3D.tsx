@@ -54,7 +54,7 @@ function useStage() {
   return { ref, near, ok, still, compact };
 }
 
-export function HeroStage({ fallback }: { fallback: ReactNode }) {
+export function HeroStage({ fallback, logoOnly = false }: { fallback: ReactNode; logoOnly?: boolean }) {
   const { ref, near, ok, still, compact } = useStage();
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -66,7 +66,7 @@ export function HeroStage({ fallback }: { fallback: ReactNode }) {
       {ok && mounted && (
         <Boundary fallback={fallback}>
           <div className="absolute inset-0" style={{ visibility: near ? 'visible' : 'hidden' }}>
-            <HeroScene still={still} compact={compact} paused={!near} />
+            <HeroScene still={still} compact={compact} paused={!near} logoOnly={logoOnly} />
           </div>
         </Boundary>
       )}

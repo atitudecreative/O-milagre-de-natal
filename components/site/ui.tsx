@@ -56,7 +56,7 @@ export function ArchPortrait({
 }
 
 /** Selo de borda recortada (como selo postal / medalha), em SVG. */
-export function Seal({ className, fill = '#E8B23A', children, teeth = 28 }: { className?: string; fill?: string; children?: React.ReactNode; teeth?: number }) {
+export function Seal({ className, fill = '#E8B23A', children, teeth = 28, style }: { className?: string; fill?: string; children?: React.ReactNode; teeth?: number; style?: React.CSSProperties }) {
   const pts: string[] = [];
   for (let i = 0; i <= teeth * 2; i++) {
     const a = (i / (teeth * 2)) * Math.PI * 2;
@@ -64,7 +64,7 @@ export function Seal({ className, fill = '#E8B23A', children, teeth = 28 }: { cl
     pts.push(`${(50 + Math.cos(a) * r).toFixed(2)},${(50 + Math.sin(a) * r).toFixed(2)}`);
   }
   return (
-    <div className={cx('relative aspect-square', className)}>
+    <div className={cx('relative aspect-square', className)} style={style}>
       <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" aria-hidden>
         <polygon points={pts.join(' ')} fill={fill} stroke="#0B0B0B" strokeWidth="0.35" strokeLinejoin="round" />
         <circle cx="50" cy="50" r="41" fill="none" stroke="#0B0B0B" strokeWidth="0.3" strokeDasharray="1.2 1.2" />
@@ -89,7 +89,7 @@ export function Edge({ color, kind = 'wave', flip = false }: { color: string; ki
     <svg
       viewBox="0 0 1600 60"
       preserveAspectRatio="none"
-      className={cx('pointer-events-none absolute inset-x-0 z-[1] h-[28px] w-full sm:h-[44px]', flip ? 'bottom-[-1px] rotate-180' : 'top-[-27px] sm:top-[-43px]')}
+      className={cx('edge pointer-events-none absolute inset-x-0 z-[1] h-[28px] w-full sm:h-[44px]', flip ? 'bottom-[-1px] rotate-180' : 'top-[-27px] sm:top-[-43px]')}
       aria-hidden
     >
       <path d={d} fill={color} />
@@ -133,3 +133,17 @@ export const HEX = {
   palco: '#140C0A',
   carbon: '#0B0B0B',
 };
+
+const LINHAS: Record<string, string> = {
+  a: '/media/v2/bg/arabesco-a.svg',
+  b: '/media/v2/bg/arabesco-b.svg',
+  c: '/media/v2/bg/arabesco-c.svg',
+  leve: '/media/v2/bg/arabesco-leve.svg',
+  vert: '/media/v2/bg/arabesco-vertical.svg',
+  divisor: '/media/v2/bg/divisor.svg',
+};
+
+/** Arabescos soltos: use um atrás (z menor) e outro na frente (z maior) das fotos. */
+export function Linhas({ v = 'leve', color = '#E8B23A', className, style }: { v?: keyof typeof LINHAS | string; color?: string; className?: string; style?: React.CSSProperties }) {
+  return <span aria-hidden className={cx('linhas', className)} style={{ ...style, ['--l-img' as string]: `url('${LINHAS[v] ?? v}')`, ['--l-c' as string]: color }} />;
+}

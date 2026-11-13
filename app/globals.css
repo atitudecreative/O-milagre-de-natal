@@ -228,3 +228,44 @@ html:has(.oryzo) { scrollbar-color: #6c5f51 #100904; }
 
 @keyframes float-y { 0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); } 50% { transform: translateY(-10px) rotate(var(--r, 0deg)); } }
 .floaty { animation: float-y 6s ease-in-out infinite; }
+
+/* Linhas (arabescos) soltas, para passar por trás e pela frente das fotos */
+.linhas {
+  position: absolute; pointer-events: none; display: block;
+  background: var(--l-c, #e8b23a);
+  -webkit-mask: var(--l-img, url('/media/v2/bg/arabesco-leve.svg')) center / contain no-repeat;
+  mask: var(--l-img, url('/media/v2/bg/arabesco-leve.svg')) center / contain no-repeat;
+}
+.persp { perspective: 1400px; }
+
+/* ================================================================== */
+/* Versão PALCO (KV 2024): palco turquesa em todas as seções           */
+/* ================================================================== */
+.tema-palco { background: #04181b; color: #f1ebdd; }
+.tema-palco main > section:not(#topo),
+.tema-palco footer {
+  background: linear-gradient(rgba(4, 24, 27, 0.62), rgba(4, 24, 27, 0.72)), url('/media/v2/palco/palco-secao.webp') center / cover no-repeat, #04181b;
+  color: #f1ebdd;
+}
+.tema-palco main > section:not(#topo):nth-of-type(even) {
+  background: linear-gradient(rgba(4, 24, 27, 0.55), rgba(4, 24, 27, 0.7)), url('/media/v2/palco/palco-secao-b.webp') center / cover no-repeat, #04181b;
+}
+.tema-palco main > section + section { border-top: 1px solid rgba(232, 178, 58, 0.35); }
+.tema-palco .edge { display: none; }
+/* arabescos dourados por cima do palco */
+.tema-palco .swirl::before { background: rgba(232, 178, 58, 0.16) !important; }
+.tema-palco .linhas { opacity: 0.85; }
+
+/* textos sobre o palco: creme; dentro de cartões coloridos: carbono */
+.tema-palco main section [class*='text-carbon'] { color: rgb(241 235 221 / 0.8); }
+.tema-palco :is(.bg-white, .bg-ouro, .bg-pessego, .bg-menta, .bg-creme, .bg-papel, .bg-picadeiro, .print, details, form):not(section) { color: #0b0b0b; }
+.tema-palco :is(.bg-white, .bg-ouro, .bg-pessego, .bg-menta, .bg-creme, .bg-papel, .bg-picadeiro, .print, details, form):not(section) [class*='text-carbon'] { color: rgb(11 11 11 / 0.75); }
+.tema-palco :is(.bg-white, .bg-ouro, .bg-pessego, .bg-menta, .bg-creme, .bg-papel, .print):not(section) .text-pinheiro { color: #0e5a3a; }
+.tema-palco .text-pinheiro, .tema-palco .divisor { color: #e8b23a; }
+.tema-palco .logotype { color: #e8b23a !important; }
+.tema-palco .pill-solid { background: #e8b23a; border-color: #e8b23a; color: #0b0b0b; }
+.tema-palco .pill-solid:hover { background: #f1ebdd; border-color: #f1ebdd; }
+.tema-palco :is(.bg-white, .bg-ouro, .bg-pessego, .bg-menta, form) .pill-solid { background: #0b0b0b; border-color: #0b0b0b; color: #fff; }
+.tema-palco .field-label { color: inherit; opacity: 0.75; }
+.tema-palco #contato .field-label { color: #0b0b0b; }
+.tema-palco #midia-kit .field-label { color: #0b0b0b; }

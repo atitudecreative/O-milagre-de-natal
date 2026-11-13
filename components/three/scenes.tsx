@@ -35,7 +35,7 @@ function Parallax({ children, strength = 0.18, still }: { children: React.ReactN
   return <group ref={ref}>{children}</group>;
 }
 
-export function HeroScene({ still, compact, paused = false }: { still: boolean; compact: boolean; paused?: boolean }) {
+export function HeroScene({ still, compact, paused = false, logoOnly = false }: { still: boolean; compact: boolean; paused?: boolean; logoOnly?: boolean }) {
   const f = still ? 0 : 1;
   return (
     <Canvas frameloop={paused ? 'never' : 'always'} dpr={[1, 1.75]} camera={{ position: [0, 0, 10], fov: 34 }} gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}>
@@ -44,10 +44,10 @@ export function HeroScene({ still, compact, paused = false }: { still: boolean; 
         <Parallax still={still}>
           <Float speed={1.2 * f} rotationIntensity={0.15 * f} floatIntensity={0.4 * f}>
             <group position={[0, compact ? 0.3 : 0, 0]}>
-              <Logotype3D width={compact ? 4.4 : 6.8} />
+              <Logotype3D width={logoOnly ? (compact ? 5.2 : 9.4) : compact ? 4.4 : 6.8} />
             </group>
           </Float>
-          {!compact && (
+          {!compact && !logoOnly && (
             <>
               <Float speed={1.6 * f} rotationIntensity={0.8 * f} floatIntensity={1 * f}>
                 <TopHat position={[-4.6, 1.9, -1]} rotation={[0.35, 0.4, -0.35]} scale={0.75} />
@@ -63,7 +63,7 @@ export function HeroScene({ still, compact, paused = false }: { still: boolean; 
               </Float>
             </>
           )}
-          {compact && (
+          {compact && !logoOnly && (
             <>
               <Float speed={1.6 * f} rotationIntensity={0.8 * f} floatIntensity={1 * f}>
                 <TopHat position={[-1.7, 2.3, -1]} rotation={[0.35, 0.4, -0.35]} scale={0.5} />

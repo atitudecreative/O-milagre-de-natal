@@ -60,7 +60,7 @@ export function Numbers({ metrics }: { metrics: Row[] }) {
             return (
               <li key={m.id} className={cx('w-[47%] sm:w-[31%] lg:w-[19%]', s.y)}>
                 <div style={{ transform: `rotate(${s.r}deg)` }}>
-                <Seal fill={m.status === 'demo' ? '#FFFFFF' : s.fill} className={cx('w-full', s.text)}>
+                <Seal fill={m.status === 'demo' ? '#FFFFFF' : s.fill} className={cx('w-full', m.status === 'demo' ? '' : s.text)} style={{ color: !s.text || m.status === 'demo' ? '#0B0B0B' : undefined }}>
                   <Value m={m} className={cx('leading-[0.85]', m.compact || String(m.value ?? '').length > 3 ? 'text-[clamp(28px,6vw,44px)]' : 'text-[clamp(40px,9vw,72px)]')} />
                   <p className="mt-2 text-[12px] font-bold leading-tight sm:text-[13px]">{String(m.label)}</p>
                   {m.status === 'demo' && <DemoBadge className="mt-2" />}
