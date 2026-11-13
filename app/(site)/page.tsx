@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getSiteData, siteUrl } from '@/lib/content';
-import { SitePage } from '@/components/site/SitePage';
+import { DalaPage } from '@/components/dala/DalaPage';
 
 export const revalidate = 300;
 
@@ -26,5 +26,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  return <SitePage />;
+  return <DalaPage />;
 }

@@ -269,3 +269,51 @@ html:has(.oryzo) { scrollbar-color: #6c5f51 #100904; }
 .tema-palco .field-label { color: inherit; opacity: 0.75; }
 .tema-palco #contato .field-label { color: #0b0b0b; }
 .tema-palco #midia-kit .field-label { color: #0b0b0b; }
+
+/* ================================================================== */
+/* Constelação (DESIGN.md "Dala"): void preto, 400 nos títulos,        */
+/* 200 no texto, um único violeta para ação, âmbar para destaque.      */
+/* ================================================================== */
+body:has(.dala) { background: #000; }
+html:has(.dala) { scrollbar-color: #333 #000; }
+.dala { background: #000; color: #fff; font-feature-settings: 'ss01'; }
+.dala ::selection { background: #8052ff; color: #fff; }
+.dala :focus-visible { outline: 2px solid #8052ff; outline-offset: 4px; }
+.dala input, .dala textarea { caret-color: #ffb829; }
+
+.d-display { font-weight: 400; font-size: clamp(52px, 8.4vw, 113px); line-height: 1.02; letter-spacing: -0.04em; text-wrap: balance; }
+.d-h1 { font-weight: 400; font-size: clamp(40px, 5.8vw, 78px); line-height: 1.06; letter-spacing: -0.04em; text-wrap: balance; }
+.d-h2 { font-weight: 400; font-size: clamp(30px, 3.4vw, 42px); line-height: 1.15; letter-spacing: -0.04em; }
+.d-h3 { font-weight: 400; font-size: clamp(22px, 2vw, 27px); line-height: 1.15; letter-spacing: -0.02em; }
+.d-body { font-weight: 200; font-size: 18px; line-height: 1.5; color: #fff; }
+.d-caption { font-weight: 400; font-size: 13px; line-height: 1.5; color: #9a9a9a; }
+.d-label { font-weight: 600; font-size: 14px; line-height: 1.2; letter-spacing: 0.025em; text-transform: uppercase; color: #ffb829; }
+.d-nav { font-weight: 600; font-size: 14px; letter-spacing: 0.025em; text-transform: uppercase; color: #9a9a9a; transition: color 160ms var(--ease-out); }
+.d-nav:hover { color: #fff; }
+.d-btn {
+  display: inline-flex; align-items: center; justify-content: center; white-space: nowrap;
+  border-radius: 24px; background: #8052ff; color: #fff; padding: 14px 18px;
+  font-weight: 600; font-size: 14px; letter-spacing: 0.025em; text-transform: uppercase;
+  transition: transform 160ms var(--ease-out), background-color 200ms var(--ease-out);
+}
+.d-btn:hover { background: #8f66ff; }
+.d-btn:active { transform: scale(0.97); }
+.d-link { font-weight: 600; font-size: 14px; letter-spacing: 0.025em; text-transform: uppercase; color: #fff; text-decoration: underline; text-underline-offset: 6px; text-decoration-color: rgba(255, 255, 255, 0.3); transition: text-decoration-color 160ms var(--ease-out), color 160ms; }
+.d-link:hover { color: #ffb829; text-decoration-color: #ffb829; }
+
+/* formulários compartilhados no vocabulário da constelação */
+.dala .field { border: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.22); border-radius: 0; background: transparent; color: #fff; padding: 12px 0; font-weight: 300; box-shadow: none; }
+.dala .field::placeholder { color: rgba(255, 255, 255, 0.3); }
+.dala .field:focus { box-shadow: none; border-bottom-color: #8052ff; }
+.dala select.field option { background: #000; color: #fff; }
+.dala .field-label { color: #9a9a9a; font-weight: 600; letter-spacing: 0.025em; font-size: 12px; }
+.dala .pill { border-radius: 24px; letter-spacing: 0.025em; font-weight: 600; }
+.dala .pill-solid { background: #8052ff; border-color: #8052ff; color: #fff; }
+.dala .pill-solid:hover { background: #8f66ff; border-color: #8f66ff; }
+.dala .pill-ghost { background: transparent; border-color: transparent; color: #fff; text-decoration: underline; text-underline-offset: 6px; padding-left: 0; padding-right: 0; }
+.dala .bg-menta { background: transparent; }
+.dala [class*='text-carbon'] { color: #bdbdbd; }
+.dala .text-cortina { color: #ffb829; }
+.dala .display { font-family: inherit; text-transform: none; font-weight: 400; letter-spacing: -0.04em; }
+.dala input[type='checkbox'] { accent-color: #8052ff; }
+.dala form label a, .dala form a { color: #ffb829; }
