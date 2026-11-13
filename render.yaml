@@ -1,0 +1,36 @@
+# Blueprint do Render — https://render.com/docs/blueprint-spec
+# No dashboard: New → Blueprint → selecione este repositório.
+#
+# Banco SQLite + uploads ficam no disco persistente (/var/data).
+# Disco persistente exige plano pago (Starter ou superior) e mantém uma única instância.
+# Alternativa sem disco: use Supabase (DATABASE_URL + SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY)
+# e remova o bloco "disk" — veja o README.
+services:
+  - type: web
+    name: o-milagre-do-natal
+    runtime: node
+    plan: starter
+    region: virginia
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    disk:
+      name: dados
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATA_DIR
+        value: /var/data
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_NAME
+        value: Administrador

@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --night: #08070a;
+  --gold-grad: linear-gradient(100deg, #9a5f33 0%, #d9a06a 18%, #f4d7ad 34%, #c98a55 52%, #f0c993 70%, #a8693b 88%, #e6bc88 100%);
+  --hairline: rgba(239, 231, 218, 0.12);
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 84px;
+  -webkit-text-size-adjust: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+body {
+  background: var(--night);
+  color: #efe7da;
+  font-feature-settings: 'ss01', 'cv11';
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection { background: #c68752; color: #08070a; }
+
+:focus-visible { outline: 2px solid #e6bc88; outline-offset: 3px; border-radius: 2px; }
+
+@layer components {
+  .wrap { @apply mx-auto w-full max-w-site px-5 sm:px-8 lg:px-12; }
+
+  .label {
+    @apply font-sans text-[11px] font-semibold uppercase tracking-label text-gold/80;
+  }
+
+  .display { font-family: var(--font-display); font-variation-settings: 'SOFT' 50, 'WONK' 1; letter-spacing: -0.02em; }
+
+  .text-gold-grad {
+    background: var(--gold-grad);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .btn {
+    @apply relative inline-flex items-center justify-center gap-3 overflow-hidden whitespace-nowrap px-6 py-4 font-sans text-[12px] font-semibold uppercase tracking-[0.2em] transition-all duration-500 ease-silk;
+  }
+  .btn-gold { @apply text-night; background: var(--gold-grad); background-size: 220% 100%; background-position: 0% 0; }
+  .btn-gold:hover { background-position: 100% 0; box-shadow: 0 10px 40px -10px rgba(230, 188, 136, 0.55); }
+  .btn-ghost { @apply border border-cream/25 text-cream hover:border-gold hover:text-gold; }
+  .btn .arrow { @apply transition-transform duration-500 ease-silk; }
+  .btn:hover .arrow { transform: translateX(4px); }
+
+  .hairline { border-color: var(--hairline); }
+
+  .field {
+    @apply w-full border-0 border-b border-cream/20 bg-transparent px-0 pb-3 pt-2 font-sans text-[16px] text-cream placeholder:text-cream/30 transition-colors focus:border-gold focus:outline-none focus:ring-0;
+  }
+  .field-label { @apply mb-1 block font-sans text-[11px] font-semibold uppercase tracking-[0.18em] text-cream/55; }
+}
+
+/* Grão fotográfico sobre toda a página */
+.grain::after {
+  content: '';
+  position: fixed;
+  inset: -50%;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 1.2s steps(4) infinite;
+}
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-3%, 2%); }
+  50% { transform: translate(2%, -3%); }
+  75% { transform: translate(-1%, 3%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Céu estrelado (puro CSS) */
+.stars {
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 244, 225, 0.8), transparent 60%),
+    radial-gradient(1px 1px at 68% 12%, rgba(255, 244, 225, 0.7), transparent 60%),
+    radial-gradient(1.4px 1.4px at 84% 34%, rgba(255, 244, 225, 0.9), transparent 60%),
+    radial-gradient(1px 1px at 32% 62%, rgba(255, 244, 225, 0.5), transparent 60%),
+    radial-gradient(1px 1px at 52% 40%, rgba(255, 244, 225, 0.6), transparent 60%),
+    radial-gradient(1.2px 1.2px at 6% 80%, rgba(255, 244, 225, 0.6), transparent 60%),
+    radial-gradient(1px 1px at 92% 74%, rgba(255, 244, 225, 0.5), transparent 60%),
+    radial-gradient(1px 1px at 24% 36%, rgba(255, 244, 225, 0.45), transparent 60%);
+  background-size: 420px 420px;
+  animation: twinkle 8s ease-in-out infinite alternate;
+}
+@keyframes twinkle { from { opacity: 0.55; } to { opacity: 1; } }
+
+/* Logotipo oficial aplicado como máscara + dourado vivo */
+.logotype {
+  aspect-ratio: 2000 / 624;
+  background: var(--gold-grad);
+  background-size: 220% 100%;
+  -webkit-mask: url('/media/logotipo.png') center / contain no-repeat;
+  mask: url('/media/logotipo.png') center / contain no-repeat;
+  animation: shimmer 9s ease-in-out infinite alternate;
+  filter: drop-shadow(0 6px 30px rgba(198, 135, 82, 0.25));
+}
+@keyframes shimmer { from { background-position: 0% 0; } to { background-position: 100% 0; } }
+
+/* Janela em arco — motivo da identidade */
+.arch { border-radius: 9999px 9999px 0 0 / 50vw 50vw 0 0; }
+@supports (border-radius: 50% 50% 0 0 / 30% 30% 0 0) {
+  .arch { border-radius: 50% 50% 0 0 / 34% 34% 0 0; }
+}
+
+@keyframes heroZoom { from { transform: scale(1.14); } to { transform: scale(1.02); } }
+@keyframes heroIn { from { opacity: 0; transform: translateY(24px) scale(0.98); filter: blur(8px); } to { opacity: 1; transform: none; filter: drop-shadow(0 6px 30px rgba(198, 135, 82, 0.25)); } }
+
+.marquee { animation: marquee 48s linear infinite; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+.draw-path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 3.2s cubic-bezier(0.65, 0, 0.35, 1) 0.2s forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+.demo-hatch {
+  background-image: repeating-linear-gradient(135deg, rgba(156, 182, 196, 0.16) 0 2px, transparent 2px 8px);
+}
+
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }

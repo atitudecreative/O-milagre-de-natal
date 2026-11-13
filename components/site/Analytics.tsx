@@ -1,0 +1,24 @@
+import Script from 'next/script';
+
+/** GA4 e Meta Pixel: ativados quando os IDs estão no painel (SEO e rastreamento) ou no .env. */
+export function Analytics({ ga4, pixel }: { ga4?: string; pixel?: string }) {
+  const ga = /^G-[A-Z0-9]+$/i.test(ga4 ?? '') ? ga4 : null;
+  const px = /^\d{8,20}$/.test(pixel ?? '') ? pixel : null;
+  return (
+    <>
+      {ga && (
+        <>
+          <Script src={`https://www.googletagmanager.com/gtag/js?id=${ga}`} strategy="afterInteractive" />
+          <Script id="ga4" strategy="afterInteractive">
+            {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.gtag=gtag;gtag('js',new Date());gtag('config','${ga}');`}
+          </Script>
+        </>
+      )}
+      {px && (
+        <Script id="meta-pixel" strategy="afterInteractive">
+          {`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${px}');fbq('track','PageView');`}
+        </Script>
+      )}
+    </>
+  );
+}
