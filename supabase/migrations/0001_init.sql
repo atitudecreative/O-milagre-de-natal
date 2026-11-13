@@ -2,6 +2,22 @@
 -- O acesso aos dados é feito apenas pelo servidor (DATABASE_URL). RLS habilitado
 -- sem políticas públicas: a chave anon do Supabase não lê nem grava nada.
 
+CREATE TABLE IF NOT EXISTS "editions" (
+  "id" TEXT PRIMARY KEY,
+  "year" TEXT,
+  "title" TEXT,
+  "dates" TEXT,
+  "venue" TEXT,
+  "highlight" TEXT,
+  "image" TEXT,
+  "color" TEXT,
+  "sort" DOUBLE PRECISION,
+  "visible" BOOLEAN,
+  "created_at" TIMESTAMPTZ,
+  "updated_at" TIMESTAMPTZ
+);
+ALTER TABLE "editions" ENABLE ROW LEVEL SECURITY;
+
 CREATE TABLE IF NOT EXISTS "metrics" (
   "id" TEXT PRIMARY KEY,
   "label" TEXT,
@@ -53,6 +69,7 @@ CREATE TABLE IF NOT EXISTS "people" (
   "bio" TEXT,
   "photo" TEXT,
   "link" TEXT,
+  "edition" TEXT,
   "sort" DOUBLE PRECISION,
   "visible" BOOLEAN,
   "created_at" TIMESTAMPTZ,

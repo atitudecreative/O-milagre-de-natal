@@ -254,6 +254,9 @@ export async function seedDatabase(db: Db) {
     }
   }
 
+  const version = Number((await db.getSettings()).seed_version || 1);
+  if (version < 2) await upgradeV2(db);
+
   if ((await db.count('users')) === 0) {
     const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
     const password = process.env.ADMIN_PASSWORD;
@@ -270,4 +273,101 @@ export async function seedDatabase(db: Db) {
       console.warn('[seed] Nenhum usuário no painel. Defina ADMIN_EMAIL e ADMIN_PASSWORD e reinicie para criar o primeiro administrador.');
     }
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* v2 — redesign "picadeiro de papel": histórico 2024/2025 e números   */
+/* Fontes: mídia kit 2026, apresentação oficial 2025 e artes 2024–2026 */
+/* ------------------------------------------------------------------ */
+
+const V2_SETTINGS: Record<string, { old?: string; value: string }> = {
+  hero_headline: { old: 'Um espetáculo que encanta famílias.', value: 'O Natal que reúne mais de 100 mil pessoas.' },
+  hero_text: {
+    old: 'Um presente de Natal para o Rio de Janeiro: a história do nascimento de Jesus contada com música, teatro, dança e cenografia de grande espetáculo.',
+    value:
+      'O Milagre do Natal leva música, teatro, dança e efeitos de palco a quatro dias de espetáculo na Barra da Tijuca. Sua marca pode estar no centro dessa história.',
+  },
+  marquee_items: {
+    value: [
+      '12 a 15 de dezembro de 2026',
+      '+100 mil pessoas em 2025',
+      '40 marcas na edição 2025',
+      'Cotas a partir de R$ 10 mil',
+      'Igreja Batista Atitude · Barra da Tijuca',
+    ].join('\n'),
+  },
+  past_title: { value: 'Quem já colocou a marca no palco.' },
+  past_text: {
+    value:
+      'Em 2025, O Descendente levou o musical ao Parque Olímpico da Barra com 34 patrocinadores, 6 apoiadores e apoio institucional da Prefeitura do Rio.',
+  },
+  past_master_image: { value: '/media/v2/master-2025.webp' },
+  past_sponsors_image: { value: '/media/v2/mural-patrocinadores-2025.webp' },
+  past_support_image: { value: '/media/v2/apoio-2025.webp' },
+  past_institutional: { value: 'Prefeitura do Rio · Visit Rio · Melodia 97.5' },
+};
+
+const OLD_METRIC_LABELS = new Set([
+  'pessoas assistiram aos especiais de fim de ano em 2025',
+  'de público esperado na edição 2026',
+  'dias de espetáculo',
+  'de alcance digital da campanha',
+  'seguidores nos canais oficiais',
+]);
+
+const V2_ROWS: Record<string, Record<string, unknown>[]> = {
+  metrics: [
+    { label: 'pessoas assistiram ao Musical de Natal em 2025', value: 100000, prefix: '+', compact: true, note: 'Mídia kit oficial 2026', status: 'real' },
+    { label: 'de público esperado em 2026', value: 100000, prefix: '+', compact: true, note: 'Expectativa da organização', status: 'real' },
+    { label: 'marcas patrocinaram e apoiaram a edição 2025', value: 40, note: '34 patrocinadores + 6 apoiadores · arte oficial 2025', status: 'real' },
+    { label: 'dias de espetáculo em 2026', value: 4, note: '12 a 15 de dezembro', status: 'real' },
+    { label: 'artistas convidados em 2025', value: 5, note: 'Luciano Camargo, Ton Carfi, Cristina Mel, Davi Sacer e Maria Pita', status: 'real' },
+    { label: 'temporadas seguidas: 2024, 2025 e 2026', value: 3, note: 'Uma tradição de Natal no Rio', status: 'real' },
+  ],
+  editions: [
+    { year: '2024', title: 'O Melhor Natal', dates: '14 e 15 de dezembro', venue: 'Igreja Batista Atitude', highlight: 'Acrobatas no ar, coral e elenco completo em cena.', image: '/media/v2/kv-2024.webp', color: 'turquesa' },
+    { year: '2025', title: 'O Descendente', dates: '29 e 30 de novembro', venue: 'Parque Olímpico da Barra da Tijuca', highlight: 'No Parque Olímpico, com expectativa de 40 mil pessoas e 5 artistas convidados.', image: '/media/v2/kv-2025.webp', color: 'cortina' },
+    { year: '2026', title: 'O Milagre do Natal', dates: '12, 13, 14 e 15 de dezembro', venue: 'Igreja Batista Atitude', highlight: 'Quatro dias de espetáculo e expectativa de mais de 100 mil pessoas.', image: '/media/kv-wide.webp', color: 'ouro' },
+  ],
+  people: [
+    { name: 'Luciano Camargo', role: 'Participação especial', edition: '2025 · O Descendente', photo: '/media/v2/adesivos/luciano.webp' },
+    { name: 'Cristina Mel', role: 'Participação especial', edition: '2025 · O Descendente', photo: '/media/v2/adesivos/cristina-mel.webp' },
+    { name: 'Davi Sacer', role: 'Participação especial', edition: '2025 · O Descendente', photo: '/media/v2/adesivos/davi-sacer.webp' },
+    { name: 'Ton Carfi', role: 'Participação especial', edition: '2025 · O Descendente', photo: '/media/v2/adesivos/ton-carfi.webp' },
+    { name: 'Maria Pita', role: 'Participação especial', edition: '2025 · O Descendente', photo: '/media/v2/adesivos/maria-pita.webp' },
+  ],
+  gallery: [
+    { media: '/media/v2/palco-confete.webp', caption: 'A iluminação é um espetáculo à parte', category: 'Em cena', size: 'hero' },
+    { media: '/media/v2/cenario-relogio.webp', caption: 'Um cenário grandioso', category: 'Em cena', size: 'wide' },
+    { media: '/media/v2/projecao.webp', caption: 'Projeções mapeadas', category: 'Estrutura', size: 'tall' },
+    { media: '/media/v2/figurino.webp', caption: 'Figurinos pensados nos detalhes', category: 'Bastidores', size: 'wide' },
+    { media: '/media/v2/parque-olimpico-wide.webp', caption: 'Parque Olímpico da Barra, 2025', category: 'Público', size: 'wide' },
+    { media: '/media/v2/kv-2025-convidados.webp', caption: 'Campanha O Descendente, 2025', category: 'Campanha', size: 'wide' },
+    { media: '/media/v2/combo-2024.webp', caption: 'Combo oficial de pipoca, 2024', category: 'Campanha', size: 'tall' },
+  ],
+};
+
+async function upgradeV2(db: Db) {
+  const s = await db.getSettings();
+  const patch: Record<string, string> = {};
+  for (const [k, { old, value }] of Object.entries(V2_SETTINGS)) {
+    if (!(k in s) || !s[k] || (old !== undefined && s[k] === old)) patch[k] = value;
+  }
+  patch.seed_version = '2';
+
+  for (const m of await db.list('metrics')) if (OLD_METRIC_LABELS.has(String(m.label))) await db.update('metrics', m.id, { visible: false });
+  for (const g of await db.list('gallery'))
+    if (['/media/luzes.webp', '/media/coral.webp', '/media/palco-faiscas.webp', '/media/palco-telas.webp', '/media/elenco-palco.webp'].includes(String(g.media))) await db.update('gallery', g.id, { visible: false });
+
+  for (const [table, rows] of Object.entries(V2_ROWS)) {
+    const existing = await db.list(table);
+    let sort = table === 'gallery' ? 5 : (Math.max(0, ...existing.map((r) => Number(r.sort) || 0)) || 0) + 10;
+    if (table === 'metrics' || table === 'editions' || table === 'people') sort = (Math.max(0, ...existing.map((r) => Number(r.sort) || 0)) || 0) + 10;
+    for (const r of rows) {
+      await db.insert(table, { visible: true, sort, ...r });
+      sort += table === 'gallery' ? 0.5 : 10;
+    }
+  }
+  await db.setSettings(patch);
+  console.info('[seed] Conteúdo atualizado para a versão 2 (histórico 2024–2026).');
 }

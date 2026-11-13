@@ -54,6 +54,22 @@ const STATUS_OPTIONS = [
 
 export const COLLECTIONS: Collection[] = [
   {
+    key: 'editions',
+    label: 'Edições anteriores',
+    singular: 'edição',
+    section: 'Tradição',
+    description: 'Linha do tempo das edições do musical, com a arte oficial de cada ano.',
+    fields: [
+      { name: 'year', label: 'Ano', type: 'text', required: true, list: true },
+      { name: 'title', label: 'Nome da edição', type: 'text', required: true, list: true },
+      { name: 'dates', label: 'Datas', type: 'text' },
+      { name: 'venue', label: 'Local', type: 'text' },
+      { name: 'highlight', label: 'Destaque (frase curta)', type: 'text' },
+      { name: 'image', label: 'Arte oficial', type: 'image' },
+      { name: 'color', label: 'Cor do adesivo', type: 'select', options: ['ouro', 'cortina', 'turquesa', 'pinheiro', 'picadeiro'].map((v) => ({ value: v, label: v })) },
+    ],
+  },
+  {
     key: 'metrics',
     label: 'Números e dimensão',
     singular: 'indicador',
@@ -103,13 +119,14 @@ export const COLLECTIONS: Collection[] = [
     label: 'Elenco e convidados',
     singular: 'pessoa',
     section: '03 · Elenco',
-    description: 'Elenco, convidados e participações especiais. A grade só aparece no site quando houver itens visíveis.',
+    description: 'Elenco, convidados e participações especiais. Use foto recortada (PNG/WebP transparente) para virar adesivo no site.',
     fields: [
       { name: 'name', label: 'Nome', type: 'text', required: true, list: true },
       { name: 'role', label: 'Papel / função', type: 'text', list: true },
       { name: 'bio', label: 'Mini bio', type: 'textarea' },
       { name: 'photo', label: 'Foto', type: 'image' },
       { name: 'link', label: 'Link (Instagram, site)', type: 'url' },
+      { name: 'edition', label: 'Edição', type: 'text', placeholder: '2025 · O Descendente', list: true },
     ],
   },
   {
@@ -322,6 +339,19 @@ export const SETTINGS_GROUPS: SettingsGroup[] = [
       { name: 'sponsor_disclaimer', label: 'Nota de transparência das cotas', type: 'textarea' },
       { name: 'final_cta_title', label: 'Chamada final', type: 'text' },
       { name: 'final_cta_text', label: 'Texto de apoio final', type: 'textarea' },
+    ],
+  },
+  {
+    key: 'historico',
+    label: 'Histórico e prova social',
+    fields: [
+      { name: 'marquee_items', label: 'Faixa corrida do topo (um item por linha)', type: 'lines' },
+      { name: 'past_title', label: 'Título do mural de patrocinadores', type: 'text' },
+      { name: 'past_text', label: 'Texto do mural', type: 'textarea' },
+      { name: 'past_master_image', label: 'Patrocinador master (imagem)', type: 'image' },
+      { name: 'past_sponsors_image', label: 'Mural de patrocinadores (imagem)', type: 'image' },
+      { name: 'past_support_image', label: 'Apoiadores (imagem)', type: 'image' },
+      { name: 'past_institutional', label: 'Apoio institucional (texto)', type: 'text' },
     ],
   },
   {

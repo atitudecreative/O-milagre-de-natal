@@ -9,11 +9,11 @@ export default async function Privacidade() {
   const controller = s.legal_name || s.producer;
   const contact = s.privacy_email || s.contact_email;
   return (
-    <main className="min-h-screen bg-night py-20">
+    <main className="min-h-screen bg-papel py-20">
       <article className="wrap max-w-3xl">
-        <a href="/" className="label hover:text-gold">← Voltar ao site</a>
-        <h1 className="display mt-10 text-5xl text-cream sm:text-6xl">Política de privacidade</h1>
-        <div className="mt-10 space-y-6 text-[15px] leading-relaxed text-cream/75 [&_h2]:display [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:text-cream">
+        <a href="/" className="pill pill-ghost pill-sm">← Voltar ao site</a>
+        <h1 className="display mt-10 text-5xl sm:text-7xl">Política de privacidade</h1>
+        <div className="mt-10 space-y-6 text-[15px] leading-relaxed text-carbon/80 [&_h2]:display [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:text-carbon">
           <p>
             Esta política explica como {controller}
             {s.legal_document ? ` (CNPJ ${s.legal_document})` : ''}, responsável pelo site do musical {s.event_name}, trata os dados pessoais
@@ -47,7 +47,7 @@ export default async function Privacidade() {
             Você pode solicitar confirmação, acesso, correção, anonimização, portabilidade ou exclusão dos seus dados, bem como revogar o
             consentimento{contact ? (
               <>
-                {' '}pelo e-mail <a className="text-gold underline" href={`mailto:${contact}`}>{contact}</a>
+                {' '}pelo e-mail <a className="font-bold underline" href={`mailto:${contact}`}>{contact}</a>
               </>
             ) : ' pelos canais de contato informados no site'}
             .

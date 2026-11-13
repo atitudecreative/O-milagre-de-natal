@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
 import { getSiteData, siteUrl } from '@/lib/content';
-import { whatsappLink } from '@/lib/format';
+import { lines, whatsappLink } from '@/lib/format';
+import type { Row } from '@/lib/schema';
 import { Header } from '@/components/site/Header';
 import { Hero } from '@/components/site/Hero';
-import { About } from '@/components/site/About';
 import { Numbers } from '@/components/site/Numbers';
-import { Experience } from '@/components/site/Experience';
+import { Editions, Edition2026, Guests, PastSponsors } from '@/components/site/History';
 import { Gallery } from '@/components/site/Gallery';
+import { BrandMockups } from '@/components/site/BrandMockups';
 import { WhySponsor } from '@/components/site/WhySponsor';
 import { Audience } from '@/components/site/Audience';
 import { Tiers } from '@/components/site/Tiers';
-import { Partners } from '@/components/site/Partners';
 import { MediaKit } from '@/components/site/MediaKit';
 import { Contact } from '@/components/site/Contact';
 import { Faq } from '@/components/site/Faq';
@@ -40,6 +40,17 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+/** Em quais cotas cada aplicação de marca está prevista (lido das contrapartidas cadastradas). */
+function placementsFrom(tiers: Row[]) {
+  const has = (re: RegExp) => tiers.filter((t) => re.test(`${t.benefits ?? ''}\n${t.deliverables ?? ''}`)).map((t) => String(t.name));
+  return {
+    led: has(/tel[aã]o|led/i),
+    vip: has(/[áa]rea vip|sala vip/i),
+    materiais: has(/materiais oficiais|stand/i),
+    pipoca: has(/pipoca/i),
+  };
+}
+
 export default async function Home() {
   const data = await getSiteData();
   const s = data.settings;
@@ -65,20 +76,22 @@ export default async function Home() {
 
   return (
     <>
-      <a href="#sobre" className="sr-only z-[80] bg-gold px-4 py-2 text-night focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
+      <a href="#numeros" className="sr-only z-[80] rounded-full bg-carbon px-4 py-2 text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
         Pular para o conteúdo
       </a>
-      <Header dates={`${s.event_dates_label}`} />
+      <Header marquee={lines(s.marquee_items)} />
       <main>
         <Hero s={s} />
-        <About s={s} />
         <Numbers metrics={data.metrics} />
-        <Experience experiences={data.experiences} sessions={data.sessions} people={data.people} venue={`${s.venue_name} · ${s.venue_address} · ${s.venue_city}`} />
+        <Editions editions={data.editions} />
+        <Edition2026 s={s} sessions={data.sessions} experiences={data.experiences} />
         <Gallery items={data.gallery} />
+        <Guests people={data.people} />
+        <PastSponsors s={s} partners={data.partners} />
+        <BrandMockups placements={placementsFrom(data.tiers)} />
         <WhySponsor reasons={data.reasons} statement={s.sponsor_statement} />
         <Audience items={data.audience} />
         <Tiers tiers={data.tiers} disclaimer={s.sponsor_disclaimer} />
-        <Partners partners={data.partners} organizers={s.organizers} />
         <MediaKit s={s} whatsapp={whatsapp} autoEmail={!!process.env.RESEND_API_KEY} />
         <Contact s={s} tiers={data.tiers.map((t) => String(t.name))} whatsapp={whatsapp} />
         <Faq faqs={data.faqs} />

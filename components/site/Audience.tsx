@@ -1,23 +1,22 @@
 import type { Row } from '@/lib/schema';
 import { cx, pairs } from '@/lib/format';
-import { Reveal } from './motion';
-import { SectionHead } from './SectionHead';
+import { H2 } from './ui';
 import { DemoBadge } from './Numbers';
 
-const DONUT = ['#E6BC88', '#C68752', '#9CB6C4', '#5E7F91', '#7A4E2E', '#EFE7DA'];
+const DONUT = ['#D2381F', '#E8B23A', '#1FA3A0', '#0E5A3A', '#F26A1B', '#0B0B0B'];
 
-function Bars({ data, demo }: { data: { label: string; value: number }[]; demo: boolean }) {
+function Bars({ data }: { data: { label: string; value: number }[] }) {
   const max = Math.max(...data.map((d) => d.value), 1);
   return (
     <ul className="mt-6 space-y-4">
-      {data.map((d) => (
+      {data.map((d, i) => (
         <li key={d.label}>
-          <div className="flex justify-between gap-4 text-sm text-cream/75">
+          <div className="flex justify-between gap-4 text-[15px] font-bold">
             <span>{d.label}</span>
-            <span className="font-sans tabular-nums text-cream">{d.value}%</span>
+            <span className="tabular">{d.value}%</span>
           </div>
-          <div className="mt-2 h-2 w-full bg-cream/10">
-            <div className={cx('h-full', demo ? 'demo-hatch bg-starlight/40' : 'bg-gradient-to-r from-copper to-gold')} style={{ width: `${(d.value / max) * 100}%` }} />
+          <div className="mt-2 h-4 w-full overflow-hidden rounded-full border border-carbon bg-white">
+            <div className="h-full rounded-full" style={{ width: `${(d.value / max) * 100}%`, background: DONUT[i % DONUT.length] }} />
           </div>
         </li>
       ))}
@@ -25,42 +24,33 @@ function Bars({ data, demo }: { data: { label: string; value: number }[]; demo: 
   );
 }
 
-function Donut({ data, demo }: { data: { label: string; value: number }[]; demo: boolean }) {
+function Donut({ data }: { data: { label: string; value: number }[] }) {
   const total = data.reduce((a, b) => a + b.value, 0) || 1;
   const R = 54;
-  const C = 2 * Math.PI * R;
+  const Cc = 2 * Math.PI * R;
   let offset = 0;
   return (
     <div className="mt-6 flex flex-col items-center gap-8 sm:flex-row sm:items-start">
-      <svg viewBox="0 0 140 140" className={cx('h-40 w-40 shrink-0 -rotate-90', demo && 'opacity-70')} role="img" aria-label={data.map((d) => `${d.label} ${d.value}%`).join(', ')}>
-        <circle cx="70" cy="70" r={R} fill="none" stroke="rgba(239,231,218,0.08)" strokeWidth="16" />
+      <svg viewBox="0 0 140 140" className="h-40 w-40 shrink-0 -rotate-90" role="img" aria-label={data.map((d) => `${d.label} ${d.value}%`).join(', ')}>
+        <circle cx="70" cy="70" r={R + 11} fill="#fff" stroke="#0B0B0B" strokeWidth="1" />
+        <circle cx="70" cy="70" r={R - 11} fill="#F1EBDD" stroke="#0B0B0B" strokeWidth="1" />
         {data.map((d, i) => {
-          const len = (d.value / total) * C;
+          const len = (d.value / total) * Cc;
           const el = (
-            <circle
-              key={d.label}
-              cx="70"
-              cy="70"
-              r={R}
-              fill="none"
-              stroke={DONUT[i % DONUT.length]}
-              strokeWidth="16"
-              strokeDasharray={`${Math.max(len - 2, 0)} ${C}`}
-              strokeDashoffset={-offset}
-            />
+            <circle key={d.label} cx="70" cy="70" r={R} fill="none" stroke={DONUT[i % DONUT.length]} strokeWidth="20" strokeDasharray={`${Math.max(len - 1.5, 0)} ${Cc}`} strokeDashoffset={-offset} />
           );
           offset += len;
           return el;
         })}
       </svg>
-      <ul className="w-full space-y-2 text-sm">
+      <ul className="w-full space-y-2 text-[15px] font-bold">
         {data.map((d, i) => (
-          <li key={d.label} className="flex items-center justify-between gap-4 border-b hairline pb-2 text-cream/75">
+          <li key={d.label} className="flex items-center justify-between gap-4 border-b border-carbon/15 pb-2">
             <span className="flex items-center gap-3">
-              <span className="h-2.5 w-2.5 shrink-0" style={{ background: DONUT[i % DONUT.length] }} />
+              <span className="h-3 w-3 shrink-0 rounded-full border border-carbon" style={{ background: DONUT[i % DONUT.length] }} />
               {d.label}
             </span>
-            <span className="tabular-nums text-cream">{d.value}%</span>
+            <span className="tabular">{d.value}%</span>
           </li>
         ))}
       </ul>
@@ -73,45 +63,35 @@ export function Audience({ items }: { items: Row[] }) {
   const facts = items.filter((i) => i.kind === 'fact');
   const charts = items.filter((i) => i.kind !== 'fact');
   return (
-    <section id="publico" className="relative bg-midnight py-24 sm:py-36">
-      <div className="stars absolute inset-0 opacity-30" aria-hidden />
-      <div className="wrap relative">
-        <SectionHead
-          n="06"
-          label="Perfil do público"
-          title={<>Quem sua marca <em className="text-gold-grad">vai encontrar.</em></>}
-          intro="Um público familiar, reunido em um dos momentos mais afetivos do ano."
-        />
-
+    <section id="publico" className="relative overflow-hidden border-y border-carbon bg-menta py-20 sm:py-28">
+      <div className="wrap">
+        <H2 className="max-w-[14ch]">Quem sua marca vai encontrar.</H2>
         {facts.length > 0 && (
-          <div className="mt-16 grid gap-px bg-cream/10 md:grid-cols-3">
+          <div className="mt-12 grid gap-3 md:grid-cols-3">
             {facts.map((f, i) => (
-              <Reveal key={f.id} delay={i * 0.08} className="bg-midnight p-8 sm:p-10">
-                <div className="flex items-start justify-between gap-4">
-                  <h3 className="display text-3xl text-cream">{String(f.title)}</h3>
+              <div key={f.id} className={cx('card p-7', ['bg-white', 'bg-ouro', 'bg-pessego'][i % 3])}>
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="display text-[34px] leading-[0.9]">{String(f.title)}</h3>
                   {f.status === 'demo' && <DemoBadge />}
                 </div>
-                <p className="mt-4 text-[15px] leading-relaxed text-cream/70">{String(f.text)}</p>
-                {f.note ? <p className="mt-6 font-sans text-[10px] uppercase tracking-[0.2em] text-cream/35">{String(f.note)}</p> : null}
-              </Reveal>
+                <p className="mt-4 text-[16px] font-medium leading-relaxed">{String(f.text)}</p>
+              </div>
             ))}
           </div>
         )}
-
         {charts.length > 0 && (
-          <div className="mt-10 grid gap-10 lg:grid-cols-2">
-            {charts.map((c, i) => {
+          <div className="mt-3 grid gap-3 lg:grid-cols-2">
+            {charts.map((c) => {
               const data = pairs(c.data);
-              const demo = c.status === 'demo';
               return (
-                <Reveal key={c.id} delay={i * 0.08} className={cx('relative border p-8 sm:p-10', demo ? 'border-starlight/25' : 'hairline')}>
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <h3 className="display text-2xl text-cream">{String(c.title)}</h3>
-                    {demo && <DemoBadge />}
+                <div key={c.id} className="card p-7">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <h3 className="display text-[30px] leading-[0.9]">{String(c.title)}</h3>
+                    {c.status === 'demo' && <DemoBadge />}
                   </div>
-                  {c.kind === 'donut' ? <Donut data={data} demo={demo} /> : <Bars data={data} demo={demo} />}
-                  {c.note ? <p className={cx('mt-6 text-xs leading-relaxed', demo ? 'text-starlight/80' : 'text-cream/40')}>{String(c.note)}</p> : null}
-                </Reveal>
+                  {c.kind === 'donut' ? <Donut data={data} /> : <Bars data={data} />}
+                  {c.note ? <p className="mt-6 text-[13px] font-medium text-carbon/60">{String(c.note)}</p> : null}
+                </div>
               );
             })}
           </div>

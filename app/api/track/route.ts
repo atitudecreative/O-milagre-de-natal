@@ -4,7 +4,7 @@ import { clientIp, rateLimit } from '@/lib/ratelimit';
 
 export const runtime = 'nodejs';
 
-const ALLOWED = new Set(['sponsor_cta', 'tier_interest', 'kit_download', 'whatsapp_click', 'contact_cta', 'email_click']);
+const ALLOWED = new Set(['sponsor_cta', 'tier_interest', 'kit_download', 'whatsapp_click', 'contact_cta', 'email_click', 'brand_preview']);
 
 /** Registro interno de conversões (complementa GA4 e Meta Pixel; aparece no painel). */
 export async function POST(req: Request) {

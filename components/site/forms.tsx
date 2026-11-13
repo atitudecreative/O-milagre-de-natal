@@ -60,7 +60,7 @@ function maskPhone(v: string) {
 }
 
 function Err({ msg }: { msg?: string }) {
-  return msg ? <p className="mt-2 text-xs text-[#f0a38f]" role="alert">{msg}</p> : null;
+  return msg ? <p className="mt-2 text-xs font-bold text-cortina" role="alert">{msg}</p> : null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -121,19 +121,19 @@ export function LeadForm({ tiers, segments, whatsapp }: { tiers: string[]; segme
             key="ok"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex min-h-[520px] flex-col items-start justify-center border border-gold/40 bg-umber/40 p-10 sm:p-14"
+            className="flex min-h-[480px] flex-col items-start justify-center rounded-card bg-menta p-8 sm:p-12"
             role="status"
           >
-            <motion.svg viewBox="0 0 52 52" className="h-16 w-16 text-gold" initial="a" animate="b">
+            <motion.svg viewBox="0 0 52 52" className="h-16 w-16 text-carbon" initial="a" animate="b">
               <motion.circle cx="26" cy="26" r="24" fill="none" stroke="currentColor" strokeWidth="1.5" variants={{ a: { pathLength: 0 }, b: { pathLength: 1 } }} transition={{ duration: 1 }} />
               <motion.path d="M15 27l7 7 15-16" fill="none" stroke="currentColor" strokeWidth="2" variants={{ a: { pathLength: 0 }, b: { pathLength: 1 } }} transition={{ duration: 0.6, delay: 0.8 }} />
             </motion.svg>
-            <h3 className="display mt-8 text-4xl text-cream sm:text-5xl">Recebemos o seu interesse.</h3>
-            <p className="mt-4 max-w-md text-cream/70">
+            <h3 className="display mt-8 text-5xl sm:text-6xl">Recebemos o seu interesse.</h3>
+            <p className="mt-4 max-w-md text-lg font-medium text-carbon/80">
               Obrigado! A equipe comercial do musical vai analisar sua solicitação e retornar pelo e-mail ou telefone informado.
             </p>
             {whatsapp && (
-              <a href={whatsapp} target="_blank" rel="noopener noreferrer" onClick={() => track('whatsapp_click', 'pos-envio')} className="btn btn-ghost mt-8">
+              <a href={whatsapp} target="_blank" rel="noopener noreferrer" onClick={() => track('whatsapp_click', 'pos-envio')} className="pill pill-ghost mt-8 h-12">
                 Adiantar a conversa pelo WhatsApp
               </a>
             )}
@@ -173,7 +173,7 @@ export function LeadForm({ tiers, segments, whatsapp }: { tiers: string[]; segme
             </div>
             <div>
               <label htmlFor="lf-segment" className="field-label">Segmento da empresa *</label>
-              <select id="lf-segment" name="segment" required defaultValue="" className="field appearance-none bg-[length:12px] bg-[right_center] bg-no-repeat [&>option]:bg-night" aria-invalid={!!fieldErrors.segment}>
+              <select id="lf-segment" name="segment" required defaultValue="" className="field appearance-none bg-[length:12px] bg-[right_center] bg-no-repeat [&>option]:bg-white" aria-invalid={!!fieldErrors.segment}>
                 <option value="" disabled>Selecione</option>
                 {segments.map((s) => (
                   <option key={s}>{s}</option>
@@ -183,7 +183,7 @@ export function LeadForm({ tiers, segments, whatsapp }: { tiers: string[]; segme
             </div>
             <div>
               <label htmlFor="lf-tier" className="field-label">Cota de interesse *</label>
-              <select id="lf-tier" name="tier" required value={tier} onChange={(e) => setTier(e.target.value)} className="field appearance-none [&>option]:bg-night" aria-invalid={!!fieldErrors.tier}>
+              <select id="lf-tier" name="tier" required value={tier} onChange={(e) => setTier(e.target.value)} className="field appearance-none [&>option]:bg-white" aria-invalid={!!fieldErrors.tier}>
                 <option value="" disabled>Selecione</option>
                 {tiers.map((t) => (
                   <option key={t}>{t}</option>
@@ -205,11 +205,11 @@ export function LeadForm({ tiers, segments, whatsapp }: { tiers: string[]; segme
             </div>
 
             <div className="sm:col-span-2">
-              <label className="flex cursor-pointer items-start gap-4 text-sm leading-relaxed text-cream/65">
-                <input type="checkbox" name="consent" required className="mt-1 h-4 w-4 shrink-0 accent-[#C68752]" aria-invalid={!!fieldErrors.consent} />
+              <label className="flex cursor-pointer items-start gap-4 text-[15px] font-medium leading-relaxed text-carbon/75">
+                <input type="checkbox" name="consent" required className="mt-1 h-4 w-4 shrink-0 accent-[#0B0B0B]" aria-invalid={!!fieldErrors.consent} />
                 <span>
                   Autorizo o uso dos meus dados para contato comercial sobre o patrocínio do musical, conforme a{' '}
-                  <a href="/privacidade" target="_blank" className="text-gold underline underline-offset-4">Política de Privacidade</a> (LGPD).
+                  <a href="/privacidade" target="_blank" className="font-bold underline underline-offset-4">Política de Privacidade</a> (LGPD).
                 </span>
               </label>
               <Err msg={fieldErrors.consent} />
@@ -217,10 +217,10 @@ export function LeadForm({ tiers, segments, whatsapp }: { tiers: string[]; segme
             </div>
 
             <div className="flex flex-col gap-4 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
-              <button type="submit" disabled={state === 'sending'} className={cx('btn btn-gold', state === 'sending' && 'opacity-70')}>
-                {state === 'sending' ? 'Enviando…' : 'Enviar interesse'} <span className="arrow">→</span>
+              <button type="submit" disabled={state === 'sending'} className={cx('pill pill-solid h-14 px-8', state === 'sending' && 'opacity-70')}>
+                {state === 'sending' ? 'Enviando…' : 'Enviar interesse'} 
               </button>
-              {error && <p className="text-sm text-[#f0a38f]" role="alert">{error}</p>}
+              {error && <p className="text-sm font-bold text-cortina" role="alert">{error}</p>}
             </div>
           </motion.form>
         )}
@@ -263,7 +263,7 @@ export function KitRequest({ autoEmail }: { autoEmail: boolean }) {
 
   if (state === 'done') {
     return (
-      <p className="border-l-2 border-gold pl-4 text-sm text-cream/80" role="status">
+      <p className="rounded-2xl bg-menta px-4 py-3 text-[15px] font-bold" role="status">
         {autoEmail ? 'Pronto! O link do mídia kit foi enviado para o seu e-mail.' : 'Pedido registrado! Nossa equipe enviará o mídia kit para o seu e-mail.'}
       </p>
     );
@@ -278,18 +278,18 @@ export function KitRequest({ autoEmail }: { autoEmail: boolean }) {
       <div className="absolute -left-[9999px]" aria-hidden>
         <input name="website" tabIndex={-1} autoComplete="off" />
       </div>
-      <label className="flex items-start gap-3 text-xs leading-relaxed text-cream/55">
-        <input type="checkbox" name="consent" required className="mt-0.5 h-4 w-4 shrink-0 accent-[#C68752]" />
+      <label className="flex items-start gap-3 text-[13px] font-medium leading-relaxed text-carbon/70">
+        <input type="checkbox" name="consent" required className="mt-0.5 h-4 w-4 shrink-0 accent-[#0B0B0B]" />
         <span>
-          Autorizo o envio do material e contato comercial, conforme a <a href="/privacidade" target="_blank" className="text-gold underline underline-offset-2">Política de Privacidade</a>.
+          Autorizo o envio do material e contato comercial, conforme a <a href="/privacidade" target="_blank" className="font-bold underline underline-offset-2">Política de Privacidade</a>.
         </span>
       </label>
       <Turnstile />
       <div className="flex flex-wrap items-center gap-4">
-        <button type="submit" disabled={state === 'sending'} className="btn btn-ghost">
+        <button type="submit" disabled={state === 'sending'} className="pill pill-ghost h-12">
           {state === 'sending' ? 'Enviando…' : 'Receber por e-mail'}
         </button>
-        {error && <p className="text-xs text-[#f0a38f]" role="alert">{error}</p>}
+        {error && <p className="text-xs font-bold text-cortina" role="alert">{error}</p>}
       </div>
     </form>
   );

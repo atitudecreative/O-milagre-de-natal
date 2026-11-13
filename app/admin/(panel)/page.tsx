@@ -14,6 +14,7 @@ const EVENT_LABEL: Record<string, string> = {
   whatsapp_click: 'Cliques no WhatsApp',
   contact_cta: 'Cliques em "Fale com a equipe"',
   email_click: 'Cliques no e-mail',
+  brand_preview: 'Simulações "sua marca aqui"',
 };
 
 export default async function Dashboard({ searchParams }: { searchParams: Promise<{ erro?: string }> }) {

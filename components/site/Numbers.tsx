@@ -1,79 +1,76 @@
-import Image from 'next/image';
 import type { Row } from '@/lib/schema';
 import { compactNumber, cx } from '@/lib/format';
-import { Counter, Reveal } from './motion';
+import { Counter } from './motion';
+import { H2, Sticker } from './ui';
 
 export function DemoBadge({ className }: { className?: string }) {
   return (
     <span
-      className={cx(
-        'inline-flex items-center gap-1.5 border border-starlight/40 px-2 py-1 font-sans text-[10px] font-semibold uppercase tracking-[0.16em] text-starlight',
-        className,
-      )}
+      className={cx('inline-flex items-center gap-1.5 rounded-full border border-carbon bg-white px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.03em]', className)}
       title="Campo demonstrativo: ainda não há dado real confirmado."
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-starlight" aria-hidden />
       Demonstrativo
     </span>
   );
 }
 
-function MetricValue({ m }: { m: Row }) {
+function Value({ m, className }: { m: Row; className?: string }) {
   const value = m.value as number | null;
-  if (value === null || value === undefined) {
-    return <span className="display whitespace-nowrap text-5xl text-cream/35 sm:text-6xl">Em breve</span>;
-  }
+  if (value === null || value === undefined) return <span className={cx('display', className)}>EM BREVE</span>;
   const c = m.compact ? compactNumber(value) : { value, unit: '' };
   return (
-    <span className="display text-gold-grad text-[64px] leading-none sm:text-[88px] lg:text-[104px]">
+    <span className={cx('display tabular block whitespace-nowrap', className)}>
       {String(m.prefix ?? '')}
       <Counter to={c.value} decimals={c.value % 1 ? 1 : 0} />
-      {c.unit && <span className="ml-2 text-[0.5em]">{c.unit}</span>}
-      {m.suffix ? <span className="ml-2 text-[0.5em]">{String(m.suffix)}</span> : null}
+      {c.unit && <span className="ml-[0.06em] text-[0.62em]">{c.unit.toUpperCase()}</span>}
+      {m.suffix ? <span className="ml-[0.06em] text-[0.5em]">{String(m.suffix)}</span> : null}
     </span>
   );
 }
 
+const FILLS = ['bg-cortina text-white', 'bg-white', 'bg-turquesa text-white', 'bg-pinheiro text-white', 'bg-picadeiro'];
+
 export function Numbers({ metrics }: { metrics: Row[] }) {
   if (!metrics.length) return null;
-  const [lead, ...rest] = metrics;
+  const [lead, second, ...rest] = metrics;
   return (
-    <section id="numeros" className="relative isolate overflow-hidden bg-abyss py-24 sm:py-32">
-      <Image src="/media/luzes.webp" alt="" fill sizes="100vw" className="-z-10 object-cover opacity-25" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-night via-abyss/80 to-night" />
+    <section id="numeros" className="relative overflow-hidden border-y border-carbon bg-creme py-20 sm:py-28">
       <div className="wrap">
-        <Reveal>
-          <p className="label flex items-center gap-4">
-            <span className="text-cream/40">N° 02</span>
-            <span className="h-px w-10 bg-gold/40" aria-hidden />
-            Números e dimensão
-          </p>
-        </Reveal>
+        <H2 className="max-w-[14ch]">Um sucesso que só cresce.</H2>
 
-        <div className="mt-12 grid gap-y-14 lg:grid-cols-12 lg:gap-x-10">
-          <Reveal className="lg:col-span-6">
-            <MetricValue m={lead} />
-            <p className="display mt-5 max-w-md text-2xl leading-snug text-cream sm:text-3xl">{String(lead.label)}</p>
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              {lead.status === 'demo' && <DemoBadge />}
-              {lead.note ? <p className="font-sans text-xs uppercase tracking-[0.16em] text-cream/40">{String(lead.note)}</p> : null}
+        {/* número-escultura */}
+        <div className="relative mt-10 sm:mt-14">
+          <Value m={lead} className="text-[24vw] leading-[0.78] sm:text-[19vw] lg:text-[232px]" />
+          <p className="mt-4 max-w-md text-xl font-bold leading-tight sm:text-2xl">{String(lead.label)}</p>
+          {lead.note ? <p className="mt-2 text-sm font-medium text-carbon/60">{String(lead.note)}</p> : null}
+          <Sticker src="/media/v2/adesivos/cantora-dourada.webp" r={7} className="right-[2%] top-[-18%] hidden h-[300px] lg:block" />
+        </div>
+
+        <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-12">
+          {second && (
+            <div className="card relative flex flex-col justify-between bg-ouro p-7 sm:col-span-2 lg:col-span-5 lg:row-span-2 lg:p-10">
+              <Value m={second} className="text-[18vw] leading-[0.8] sm:text-[104px] lg:text-[112px]" />
+              <div className="mt-8">
+                <p className="text-xl font-bold leading-tight">{String(second.label)}</p>
+                {second.note ? <p className="mt-1 text-sm font-medium opacity-70">{String(second.note)}</p> : null}
+              </div>
             </div>
-          </Reveal>
-
-          <div className="grid gap-px bg-cream/10 sm:grid-cols-2 lg:col-span-6">
-            {rest.map((m, i) => (
-              <Reveal key={m.id} delay={i * 0.07} className={cx('bg-abyss/95 p-7 sm:p-8', m.status === 'demo' && 'demo-hatch')}>
-                <div className="scale-[0.62] origin-left sm:scale-[0.7]">
-                  <MetricValue m={m} />
-                </div>
-                <p className="mt-1 text-[15px] leading-snug text-cream/80">{String(m.label)}</p>
-                <div className="mt-4 flex flex-wrap items-center gap-2">
+          )}
+          {rest.map((m, i) => (
+            <div
+              key={m.id}
+              className={cx('card flex flex-col justify-between p-6 lg:p-8', m.status === 'demo' ? 'bg-white' : FILLS[i % FILLS.length], i < 2 ? 'lg:col-span-7' : rest.length - 2 === 2 ? 'lg:col-span-6' : 'lg:col-span-4')}
+            >
+              <Value m={m} className="text-[72px] leading-[0.85] lg:text-[96px]" />
+              <div className="mt-6">
+                <p className="text-lg font-bold leading-tight">{String(m.label)}</p>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
                   {m.status === 'demo' && <DemoBadge />}
-                  {m.note ? <p className="font-sans text-[11px] uppercase tracking-[0.14em] text-cream/40">{String(m.note)}</p> : null}
+                  {m.note ? <p className="text-sm font-medium opacity-75">{String(m.note)}</p> : null}
                 </div>
-              </Reveal>
-            ))}
-          </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

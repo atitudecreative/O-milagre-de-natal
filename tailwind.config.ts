@@ -5,6 +5,18 @@ export default {
   theme: {
     extend: {
       colors: {
+        carbon: '#0B0B0B',
+        papel: '#F1EBDD',
+        menta: '#D3ECE6',
+        pessego: '#F8DCC8',
+        creme: '#F5E3B5',
+        cortina: '#D2381F',
+        pinheiro: '#0E5A3A',
+        turquesa: '#1FA3A0',
+        ouro: '#E8B23A',
+        picadeiro: '#F26A1B',
+        palco: '#140C0A',
+        // tokens antigos (painel administrativo)
         night: '#08070A',
         ink: '#100D11',
         umber: '#1B1411',
@@ -19,12 +31,15 @@ export default {
         ember: '#B4472C',
       },
       fontFamily: {
-        display: ['var(--font-display)', 'Georgia', 'serif'],
+        display: ['var(--font-display)', 'Impact', 'sans-serif'],
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
       },
-      letterSpacing: { label: '0.24em' },
-      maxWidth: { site: '1360px' },
-      transitionTimingFunction: { silk: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+      borderRadius: { card: '28px', big: '40px' },
+      maxWidth: { site: '1440px' },
+      transitionTimingFunction: {
+        silk: 'cubic-bezier(0.23, 1, 0.32, 1)',
+        out: 'cubic-bezier(0.23, 1, 0.32, 1)',
+      },
     },
   },
   plugins: [],

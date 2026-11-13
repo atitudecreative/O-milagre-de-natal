@@ -1,25 +1,20 @@
 import type { Metadata, Viewport } from 'next';
-import { Fraunces, Inter_Tight } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 
-const display = Fraunces({
-  subsets: ['latin'],
-  axes: ['SOFT', 'WONK', 'opsz'],
-  style: ['normal', 'italic'],
-  variable: '--font-display',
-  display: 'swap',
-});
-
-const sans = Inter_Tight({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
+// Fontes embutidas no projeto (OFL): o build não depende do Google Fonts.
+const display = localFont({ src: './fonts/BowlbyOne-latin.woff2', weight: '400', variable: '--font-display', display: 'swap' });
+const sans = localFont({ src: './fonts/InterTight-latin.woff2', weight: '100 900', variable: '--font-sans', display: 'swap' });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
 };
 
 export const viewport: Viewport = {
-  themeColor: '#08070A',
+  themeColor: '#F1EBDD',
   width: 'device-width',
   initialScale: 1,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

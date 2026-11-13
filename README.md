@@ -13,6 +13,18 @@ Site do musical **O Milagre do Natal** (12 a 15 de dezembro de 2026, Igreja Bati
 | E-mail / CRM | Resend (opcional) e webhook genérico para CRM ou automação |
 | Medição | GA4, Meta Pixel e registro interno de conversões, visível no painel |
 
+## Identidade visual
+
+O sistema visual está documentado em [`DESIGN.md`](DESIGN.md). Ele mistura as IDs de 2024, 2025 e 2026 com a lógica de colagem do Slush:
+
+- **Base:** papel creme, contornos pretos de 1px, pílulas e cards arredondados, sem gradientes.
+- **Adesivos:** fotos do elenco recortadas com borda branca, em `public/media/v2/adesivos`.
+- **3D em Three.js:** o logotipo 2026 vetorizado em `public/media/logotipo.svg` e extrudado em dourado, mais cartola, aro de acrobacia, estrela, balde de pipoca, copo e ingresso. O 3D só carrega perto da tela, pausa fora dela, respeita "movimento reduzido" e mostra uma imagem quando o navegador não tem WebGL.
+- **Simulador "Imagine sua marca aqui":** o visitante digita o nome da empresa e vê a marca no balde 3D, no ingresso, no telão de LED, na credencial VIP e no backdrop. As cotas que incluem cada aplicação são lidas das contrapartidas cadastradas.
+- **Fontes:** Bowlby One e Inter Tight ficam embutidas no projeto (`app/fonts`), então o build não depende do Google Fonts.
+
+Na primeira inicialização, o conteúdo da versão 2 é aplicado sozinho: números, edições 2024–2026, convidados de 2025, mural de patrocinadores e galeria. Textos que já foram editados no painel não são sobrescritos.
+
 ## Rodando localmente
 
 Requer Node 22.13 ou superior.
