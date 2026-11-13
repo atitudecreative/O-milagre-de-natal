@@ -1,6 +1,7 @@
 import { getSiteData, siteUrl } from '@/lib/content';
 import { lines, whatsappLink } from '@/lib/format';
 import { placementsFrom } from '@/lib/placements';
+import { AmbientField } from '@/components/dala/Constellation';
 import { Header } from '@/components/site/Header';
 import { Hero } from '@/components/site/Hero';
 import { HeroPalco } from '@/components/site/HeroPalco';
@@ -18,7 +19,8 @@ import { FinalCta } from '@/components/site/FinalCta';
 import { Footer } from '@/components/site/Footer';
 
 
-export async function SitePage({ variant = 'claro' }: { variant?: 'claro' | 'palco' }) {
+export async function SitePage({ variant = 'claro' }: { variant?: 'claro' | 'palco' | 'mix' }) {
+  const fx = variant === 'mix';
   const data = await getSiteData();
   const s = data.settings;
   const whatsapp = whatsappLink(s.whatsapp_number, s.whatsapp_message);
@@ -48,22 +50,23 @@ export async function SitePage({ variant = 'claro' }: { variant?: 'claro' | 'pal
       </a>
       <Header marquee={lines(s.marquee_items)} />
       <main>
-        {variant === 'palco' ? <HeroPalco s={s} /> : <Hero s={s} />}
-        <Numbers metrics={data.metrics} />
+        {variant === 'palco' ? <HeroPalco s={s} /> : <Hero s={s} fx={fx} />}
+        <Numbers metrics={data.metrics} fx={fx} />
         <Editions editions={data.editions} />
         <Edition2026 s={s} sessions={data.sessions} experiences={data.experiences} />
         <Gallery items={data.gallery} />
         <Guests people={data.people} />
         <PastSponsors s={s} partners={data.partners} />
-        <BrandMockups placements={placementsFrom(data.tiers)} />
+        <BrandMockups placements={placementsFrom(data.tiers)} fx={fx} />
         <WhySponsor reasons={data.reasons} statement={s.sponsor_statement} />
         <Audience items={data.audience} />
         <Tiers tiers={data.tiers} disclaimer={s.sponsor_disclaimer} />
         <MediaKit s={s} whatsapp={whatsapp} autoEmail={!!process.env.RESEND_API_KEY} />
         <Contact s={s} tiers={data.tiers.map((t) => String(t.name))} whatsapp={whatsapp} />
         <Faq faqs={data.faqs} />
-        <FinalCta s={s} whatsapp={whatsapp} />
+        <FinalCta s={s} whatsapp={whatsapp} fx={fx} />
       </main>
+      {fx && <AmbientField />}
       <Footer s={s} whatsapp={whatsapp} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
     </div>

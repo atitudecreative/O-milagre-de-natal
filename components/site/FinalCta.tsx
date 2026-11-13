@@ -1,10 +1,20 @@
 import { TrackLink } from './motion';
+import { ConstellationBox } from '@/components/dala/Constellation';
 import { ArchPortrait, Edge, Floater, HEX } from './ui';
 
-export function FinalCta({ s, whatsapp }: { s: Record<string, string>; whatsapp: string | null }) {
+export function FinalCta({ s, whatsapp, fx = false }: { s: Record<string, string>; whatsapp: string | null; fx?: boolean }) {
   return (
     <section className="swirl sw-c relative isolate bg-cortina py-24 text-white sm:py-36" style={{ ['--sw' as string]: '#B82D17' }}>
       <Edge color={HEX.cortina} kind="curtain" />
+      {fx && (
+        <ConstellationBox
+          kind="tree"
+          fill={0.9}
+          count={2200}
+          palette={['#FFFFFF', '#FFFFFF', '#E8B23A', '#E8B23A', '#F5E3B5', '#1FA3A0']}
+          className="absolute right-[2%] top-[8%] -z-[4] hidden h-[84%] w-[30%] lg:block"
+        />
+      )}
       <div className="pointer-events-none absolute inset-0 -z-[5] overflow-hidden" aria-hidden>
         <ArchPortrait src="/media/v2/recortes/cartola-verde.webp" alt="" fill="bg-turquesa" className="absolute -bottom-px left-[3%] hidden h-[340px] w-[240px] md:block" />
         <Floater src="/media/v2/recortes/acrobata-aro.webp" r={8} className="right-[6%] top-[14%] h-[80px] sm:h-[120px]" />

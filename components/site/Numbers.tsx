@@ -1,6 +1,7 @@
 import type { Row } from '@/lib/schema';
 import { compactNumber, cx } from '@/lib/format';
 import { Counter } from './motion';
+import { ConstellationBox } from '@/components/dala/Constellation';
 import { Accent, Edge, Floater, H2, HEX, Seal } from './ui';
 
 export function DemoBadge({ className }: { className?: string }) {
@@ -37,7 +38,7 @@ const SEALS = [
   { fill: '#0E5A3A', r: -5, y: 'lg:translate-y-8', text: 'text-white' },
 ];
 
-export function Numbers({ metrics }: { metrics: Row[] }) {
+export function Numbers({ metrics, fx = false }: { metrics: Row[]; fx?: boolean }) {
   if (!metrics.length) return null;
   const [lead, ...rest] = metrics;
   return (
@@ -51,7 +52,11 @@ export function Numbers({ metrics }: { metrics: Row[] }) {
             {String(lead.label)}
           </H2>
           {lead.note ? <p className="mt-2 text-sm font-medium text-carbon/60">Fonte: {String(lead.note)}</p> : null}
-          <Floater src="/media/v2/recortes/acrobata-seda-dir.webp" r={8} className="right-[4%] top-[-6%] hidden h-[260px] lg:block" />
+          {fx ? (
+            <ConstellationBox kind="star" fill={0.95} count={1800} className="absolute -top-[10%] right-0 hidden h-[380px] w-[380px] lg:block" />
+          ) : (
+            <Floater src="/media/v2/recortes/acrobata-seda-dir.webp" r={8} className="right-[4%] top-[-6%] hidden h-[260px] lg:block" />
+          )}
         </div>
 
         <ul className="mt-14 flex flex-wrap items-start justify-center gap-x-2 gap-y-4 sm:gap-x-4 lg:justify-between">

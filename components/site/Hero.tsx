@@ -1,8 +1,9 @@
 import { HeroStage } from './Stage3D';
+import { ConstellationBox } from '@/components/dala/Constellation';
 import { ArchPortrait, Floater } from './ui';
 import { TrackLink } from './motion';
 
-export function Hero({ s }: { s: Record<string, string> }) {
+export function Hero({ s, fx = false }: { s: Record<string, string>; fx?: boolean }) {
   const year = String(s.event_edition || '').padStart(4, ' ');
   return (
     <section id="topo" className="swirl sw-a relative isolate -mt-[64px] flex min-h-[100svh] flex-col overflow-hidden bg-papel pt-[64px]">
@@ -14,13 +15,17 @@ export function Hero({ s }: { s: Record<string, string> }) {
       </div>
 
       <div className="relative -z-10 mt-6 h-[34svh] sm:absolute sm:inset-x-0 sm:top-[90px] sm:mt-0 sm:h-[50svh]">
-        <HeroStage
-          fallback={
-            <div className="flex h-full items-center justify-center">
-              <span className="logotype block w-[min(86vw,820px)]" />
-            </div>
-          }
-        />
+        {fx ? (
+          <ConstellationBox kind="logo" fill={0.9} count={4200} sizeRange={[7, 12]} className="absolute inset-0" />
+        ) : (
+          <HeroStage
+            fallback={
+              <div className="flex h-full items-center justify-center">
+                <span className="logotype block w-[min(86vw,820px)]" />
+              </div>
+            }
+          />
+        )}
       </div>
 
       {/* elenco em janelas de arco + acrobatas soltas */}

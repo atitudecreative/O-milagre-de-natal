@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { track } from '@/lib/track';
 import { cx } from '@/lib/format';
 import { BrandStage } from './Stage3D';
+import { ConstellationBox } from '@/components/dala/Constellation';
 import { Accent, Edge, HEX, Linhas } from './ui';
 import { Quad } from './Quad';
 
@@ -28,7 +29,7 @@ function BrandWord({ brand, className }: { brand: string; className?: string }) 
   );
 }
 
-export function BrandMockups({ placements }: { placements: Record<string, string[]> }) {
+export function BrandMockups({ placements, fx = false }: { placements: Record<string, string[]>; fx?: boolean }) {
   const [brand, setBrand] = useState('');
   const tracked = useRef(false);
   const shown = brand.trim().slice(0, 28);
@@ -78,6 +79,9 @@ export function BrandMockups({ placements }: { placements: Record<string, string
           <div className="relative lg:col-span-7">
             <Linhas v="b" className="-left-[12%] -top-[14%] z-0 h-[128%] w-[124%] opacity-60" color="#D9A56A" />
             <div className="relative z-10 aspect-[4/3] overflow-hidden rounded-[999px_999px_48px_48px] border border-carbon bg-papel">
+              {fx ? (
+                <ConstellationBox kind="brand" text={shown || 'SUA MARCA'} fill={0.8} count={2200} sizeRange={[5, 9]} className="absolute inset-x-0 bottom-0 top-[12%]" />
+              ) : (
               <BrandStage
                 brand={shown}
                 fallback={
@@ -85,7 +89,8 @@ export function BrandMockups({ placements }: { placements: Record<string, string
                   <img src="/media/v2/adesivos/balde-pipoca.webp" alt="" className="absolute left-1/2 top-1/2 h-3/4 -translate-x-1/2 -translate-y-1/2 object-contain" />
                 }
               />
-              <span className="absolute left-1/2 top-6 -translate-x-1/2 rounded-full border border-carbon bg-white px-3 py-1.5 text-[12px] font-bold uppercase tracking-[0.03em]">Arraste · 3D</span>
+              )}
+              <span className="absolute left-1/2 top-6 -translate-x-1/2 rounded-full border border-carbon bg-white px-3 py-1.5 text-[12px] font-bold uppercase tracking-[0.03em]">{fx ? 'Digite e veja' : 'Arraste · 3D'}</span>
             </div>
             <Linhas v="divisor" className="-bottom-5 left-[6%] z-20 h-[60px] w-[60%] -rotate-3" color="#0E5A3A" />
             <Included tiers={placements.pipoca ?? []} />

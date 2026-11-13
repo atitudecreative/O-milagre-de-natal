@@ -10,8 +10,8 @@ import * as THREE from 'three';
  * data-text (para "text") e data-side="left|right|center".
  */
 
-type Kind = 'logo' | 'text' | 'star' | 'tree' | 'ticket' | 'brand' | 'scatter';
-type Shape = { kind: Kind; text: string; side: 'left' | 'right' | 'center' };
+export type Kind = 'logo' | 'text' | 'star' | 'tree' | 'ticket' | 'brand' | 'scatter';
+export type Shape = { kind: Kind; text: string; side: 'left' | 'right' | 'center' };
 
 const PALETTE = ['#8052ff', '#8052ff', '#a98bff', '#ffb829', '#ffb829', '#15846e', '#1fd1b0', '#e24bd0', '#4d7cff', '#ffffff'];
 
@@ -34,6 +34,7 @@ const FRAG = /* glsl */ `
 varying float vA;
 varying vec3 vC;
 varying float vR;
+uniform float thick;
 float sdTri(vec2 p) {
   const float k = 1.7320508;
   p.x = abs(p.x) - 1.0;
@@ -48,7 +49,7 @@ void main() {
   float c = cos(vR), s = sin(vR);
   p = mat2(c, -s, s, c) * p;
   float d = sdTri(p * 1.55);
-  float e = 1.0 - smoothstep(0.09, 0.2, abs(d));
+  float e = 1.0 - smoothstep(0.09 + thick, 0.2 + thick, abs(d));
   if (e < 0.02) discard;
   gl_FragColor = vec4(vC, e * vA);
 }`;
@@ -199,181 +200,255 @@ function sampleShape(shape: Shape, n: number, w: number, h: number, img: HTMLIma
   return out;
 }
 
-/* ---------------- componente ---------------- */
+/* ---------------- motor ---------------- */
 
+type EngineOpts = {
+  mode: 'window' | 'element';
+  count: number;
+  ambientRatio: number;
+  palette: string[];
+  additive: boolean;
+  sizeRange: [number, number];
+  shapeAlpha: [number, number];
+  ambientAlpha: [number, number];
+  /** caixa onde a forma é desenhada, a partir do tamanho da área */
+  layout: (shape: Shape, W: number, H: number) => { cx: number; cy: number; bw: number; bh: number };
+};
+
+function createEngine(el: HTMLElement, opts: EngineOpts) {
+  let renderer: THREE.WebGLRenderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
+  } catch {
+    return null;
+  }
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const area = () => (opts.mode === 'window' ? { w: innerWidth, h: innerHeight } : { w: el.clientWidth || 1, h: el.clientHeight || 1 });
+  let { w: W, h: H } = area();
+  const N = opts.count;
+  const AMBIENT = Math.round(N * opts.ambientRatio);
+
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(W, H);
+  renderer.domElement.style.display = 'block';
+  el.appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(0, W, 0, H, -10, 10);
+
+  const pos = new Float32Array(N * 3);
+  const size = new Float32Array(N);
+  const angle = new Float32Array(N);
+  const alpha = new Float32Array(N);
+  const color = new Float32Array(N * 3);
+  const spin = new Float32Array(N);
+  const speed = new Float32Array(N);
+  const phase = new Float32Array(N);
+  const amb = new Float32Array(Math.max(1, AMBIENT) * 2);
+  const tmp = new THREE.Color();
+  const rnd = (a: number, b: number) => a + Math.random() * (b - a);
+  for (let i = 0; i < N; i++) {
+    pos[i * 3] = Math.random() * W;
+    pos[i * 3 + 1] = Math.random() * H;
+    const ambient = i < AMBIENT;
+    size[i] = rnd(opts.sizeRange[0], opts.sizeRange[1]) * (ambient ? 1.15 : 1);
+    angle[i] = Math.random() * Math.PI * 2;
+    alpha[i] = ambient ? rnd(...opts.ambientAlpha) : rnd(...opts.shapeAlpha);
+    tmp.set(opts.palette[(Math.random() * opts.palette.length) | 0]);
+    color.set([tmp.r, tmp.g, tmp.b], i * 3);
+    spin[i] = (Math.random() - 0.5) * 0.8;
+    speed[i] = rnd(0.6, 1.4);
+    phase[i] = Math.random() * Math.PI * 2;
+  }
+  for (let i = 0; i < AMBIENT; i++) {
+    amb[i * 2] = Math.random();
+    amb[i * 2 + 1] = Math.random();
+  }
+
+  const geo = new THREE.BufferGeometry();
+  const posAttr = new THREE.BufferAttribute(pos, 3).setUsage(THREE.DynamicDrawUsage);
+  const angAttr = new THREE.BufferAttribute(angle, 1).setUsage(THREE.DynamicDrawUsage);
+  geo.setAttribute('position', posAttr);
+  geo.setAttribute('size', new THREE.BufferAttribute(size, 1));
+  geo.setAttribute('angle', angAttr);
+  geo.setAttribute('alpha', new THREE.BufferAttribute(alpha, 1));
+  geo.setAttribute('pcolor', new THREE.BufferAttribute(color, 3));
+  const mat = new THREE.ShaderMaterial({
+    vertexShader: VERT,
+    fragmentShader: FRAG,
+    uniforms: { pr: { value: renderer.getPixelRatio() }, thick: { value: opts.additive ? 0 : 0.045 } },
+    transparent: true,
+    depthWrite: false,
+    blending: opts.additive ? THREE.AdditiveBlending : THREE.NormalBlending,
+  });
+  const points = new THREE.Points(geo, mat);
+  points.frustumCulled = false;
+  scene.add(points);
+
+  let shape: Shape = { kind: 'scatter', text: '', side: 'center' };
+  let target = new Float32Array(N * 2);
+  let scattered = true;
+  let img: HTMLImageElement | null = null;
+  let token = 0;
+
+  const reshape = async () => {
+    const my = ++token;
+    scattered = shape.kind === 'scatter';
+    if (!scattered) {
+      if (shape.kind === 'logo' && !img) img = await loadLogo();
+      if (my !== token) return;
+      const { bw, bh } = opts.layout(shape, W, H);
+      target = sampleShape(shape, N, bw, bh, img);
+    }
+    if (still) snap();
+  };
+
+  let mouseX = -9999;
+  let mouseY = -9999;
+  const onMove = (e: PointerEvent) => {
+    if (opts.mode === 'window') {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    } else {
+      const r = el.getBoundingClientRect();
+      mouseX = e.clientX - r.left;
+      mouseY = e.clientY - r.top;
+    }
+  };
+
+  let t = 0;
+  const o = { x: 0, y: 0 };
+  const targetOf = (i: number) => {
+    const L = opts.layout(shape, W, H);
+    if (i < AMBIENT || scattered) {
+      const k = i < AMBIENT ? i : i % Math.max(1, AMBIENT);
+      const ax = i < AMBIENT ? amb[k * 2] : Math.abs((Math.sin(i * 12.9898) * 43758.5453) % 1);
+      const ay = i < AMBIENT ? amb[k * 2 + 1] : Math.abs((Math.sin(i * 78.233) * 12543.123) % 1);
+      o.x = ax * W + (still ? 0 : Math.sin(t * 0.07 + phase[i]) * 40);
+      o.y = ay * H + (still ? 0 : Math.cos(t * 0.05 + phase[i]) * 40);
+      return;
+    }
+    o.x = L.cx + target[i * 2] + (still ? 0 : Math.sin(t * 0.9 + phase[i]) * 1.6);
+    o.y = L.cy + target[i * 2 + 1] + (still ? 0 : Math.cos(t * 0.7 + phase[i]) * 1.6);
+  };
+
+  const snap = () => {
+    for (let i = 0; i < N; i++) {
+      targetOf(i);
+      pos[i * 3] = o.x;
+      pos[i * 3 + 1] = o.y;
+    }
+    posAttr.needsUpdate = true;
+    renderer.render(scene, camera);
+  };
+
+  let visible = true;
+  let last = performance.now();
+  let raf = 0;
+  const frame = (now: number) => {
+    raf = requestAnimationFrame(frame);
+    if (!visible || document.hidden) {
+      last = now;
+      return;
+    }
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    t += dt;
+    const ease = 1 - Math.pow(0.06, dt);
+    for (let i = 0; i < N; i++) {
+      targetOf(i);
+      let x = pos[i * 3];
+      let y = pos[i * 3 + 1];
+      x += (o.x - x) * ease * speed[i];
+      y += (o.y - y) * ease * speed[i];
+      const dx = x - mouseX;
+      const dy = y - mouseY;
+      const d2 = dx * dx + dy * dy;
+      if (d2 < 14400) {
+        const f = (1 - d2 / 14400) * 9;
+        const d = Math.sqrt(d2) || 1;
+        x += (dx / d) * f;
+        y += (dy / d) * f;
+      }
+      pos[i * 3] = x;
+      pos[i * 3 + 1] = y;
+      angle[i] += spin[i] * dt;
+    }
+    posAttr.needsUpdate = true;
+    angAttr.needsUpdate = true;
+    renderer.render(scene, camera);
+  };
+
+  const resize = () => {
+    ({ w: W, h: H } = area());
+    renderer.setSize(W, H);
+    camera.right = W;
+    camera.bottom = H;
+    camera.updateProjectionMatrix();
+    reshape();
+  };
+  const ro = opts.mode === 'element' ? new ResizeObserver(resize) : null;
+  ro?.observe(el);
+  if (opts.mode === 'window') addEventListener('resize', resize);
+  addEventListener('pointermove', onMove, { passive: true });
+  if (still) snap();
+  else raf = requestAnimationFrame(frame);
+
+  return {
+    still,
+    setShape(next: Shape) {
+      if (next.kind === shape.kind && next.text === shape.text && next.side === shape.side) return;
+      shape = next;
+      reshape();
+    },
+    setVisible(v: boolean) {
+      visible = v;
+    },
+    rerender: snap,
+    destroy() {
+      cancelAnimationFrame(raf);
+      ro?.disconnect();
+      removeEventListener('resize', resize);
+      removeEventListener('pointermove', onMove);
+      renderer.dispose();
+      geo.dispose();
+      mat.dispose();
+      renderer.domElement.remove();
+    },
+  };
+}
+
+/* ---------------- componentes ---------------- */
+
+/** Constelação de tela cheia, guiada pelas seções com data-shape (versão Dala). */
 export function Constellation() {
   const host = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const el = host.current;
     if (!el) return;
-    let renderer: THREE.WebGLRenderer;
-    try {
-      renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
-    } catch {
-      return; // sem WebGL: o conteúdo continua legível sem a constelação
-    }
-    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let W = innerWidth;
-    let H = innerHeight;
-    const mobile = () => W < 1024;
-    const N = mobile() ? 2400 : 5200;
-    const AMBIENT = Math.round(N * 0.16);
-
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setSize(W, H);
-    el.appendChild(renderer.domElement);
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(0, W, 0, H, -10, 10);
-
-    const pos = new Float32Array(N * 3);
-    const size = new Float32Array(N);
-    const angle = new Float32Array(N);
-    const alpha = new Float32Array(N);
-    const color = new Float32Array(N * 3);
-    const spin = new Float32Array(N);
-    const speed = new Float32Array(N);
-    const phase = new Float32Array(N);
-    const amb = new Float32Array(AMBIENT * 2);
-    const tmp = new THREE.Color();
-    for (let i = 0; i < N; i++) {
-      pos[i * 3] = Math.random() * W;
-      pos[i * 3 + 1] = Math.random() * H;
-      const ambient = i < AMBIENT;
-      size[i] = ambient ? 6 + Math.random() * 8 : 5 + Math.random() * (mobile() ? 6 : 8);
-      angle[i] = Math.random() * Math.PI * 2;
-      alpha[i] = ambient ? 0.28 + Math.random() * 0.25 : 0.75 + Math.random() * 0.25;
-      tmp.set(PALETTE[(Math.random() * PALETTE.length) | 0]);
-      color.set([tmp.r, tmp.g, tmp.b], i * 3);
-      spin[i] = (Math.random() - 0.5) * 0.8;
-      speed[i] = 0.6 + Math.random() * 0.8;
-      phase[i] = Math.random() * Math.PI * 2;
-    }
-    for (let i = 0; i < AMBIENT; i++) {
-      amb[i * 2] = Math.random();
-      amb[i * 2 + 1] = Math.random();
-    }
-
-    const geo = new THREE.BufferGeometry();
-    const posAttr = new THREE.BufferAttribute(pos, 3).setUsage(THREE.DynamicDrawUsage);
-    const angAttr = new THREE.BufferAttribute(angle, 1).setUsage(THREE.DynamicDrawUsage);
-    geo.setAttribute('position', posAttr);
-    geo.setAttribute('size', new THREE.BufferAttribute(size, 1));
-    geo.setAttribute('angle', angAttr);
-    geo.setAttribute('alpha', new THREE.BufferAttribute(alpha, 1));
-    geo.setAttribute('pcolor', new THREE.BufferAttribute(color, 3));
-    const mat = new THREE.ShaderMaterial({
-      vertexShader: VERT,
-      fragmentShader: FRAG,
-      uniforms: { pr: { value: renderer.getPixelRatio() } },
-      transparent: true,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
+    const mobile = innerWidth < 1024;
+    const eng = createEngine(el, {
+      mode: 'window',
+      count: mobile ? 2400 : 5200,
+      ambientRatio: 0.16,
+      palette: PALETTE,
+      additive: true,
+      sizeRange: mobile ? [5, 11] : [5, 13],
+      shapeAlpha: [0.75, 1],
+      ambientAlpha: [0.28, 0.53],
+      layout: (sh, W, H) => {
+        if (W < 1024) return { cx: W * 0.5, cy: H * 0.42, bw: W * 0.92, bh: Math.min(H * 0.36, W * 0.7) };
+        const bw = Math.min(W * 0.44, 720);
+        const bh = Math.min(H * 0.62, 560);
+        const cx = sh.side === 'left' ? W * 0.27 : sh.side === 'center' ? W * 0.5 : W * 0.73;
+        return { cx, cy: H * 0.5, bw, bh };
+      },
     });
-    const points = new THREE.Points(geo, mat);
-    points.frustumCulled = false;
-    scene.add(points);
-
-    /* alvos */
-    let shape: Shape = { kind: 'logo', text: '', side: 'right' };
+    if (!eng) return;
     let brand = '';
-    let target = new Float32Array(N * 2);
-    let scattered = false;
-    let img: HTMLImageElement | null = null;
-    let reshapeToken = 0;
+    let current: Shape = { kind: 'logo', text: '', side: 'right' };
+    const apply = () => eng.setShape(current.kind === 'brand' ? { ...current, text: brand || 'SUA MARCA' } : current);
+    apply();
 
-    const layout = () => {
-      if (mobile()) return { cx: W * 0.5, cy: H * 0.42, bw: W * 0.92, bh: Math.min(H * 0.36, W * 0.7) };
-      const bw = Math.min(W * 0.44, 720);
-      const bh = Math.min(H * 0.62, 560);
-      const cx = shape.side === 'left' ? W * 0.27 : shape.side === 'center' ? W * 0.5 : W * 0.73;
-      return { cx, cy: H * 0.5, bw, bh };
-    };
-
-    const reshape = async () => {
-      const token = ++reshapeToken;
-      scattered = shape.kind === 'scatter';
-      if (scattered) return;
-      if (shape.kind === 'logo' && !img) img = await loadLogo();
-      if (token !== reshapeToken) return;
-      const { bw, bh } = layout();
-      const s = shape.kind === 'brand' ? { ...shape, text: brand || 'SUA MARCA' } : shape;
-      target = sampleShape(s, N, bw, bh, img);
-      if (still) snap();
-    };
-
-    let mouseX = -9999;
-    let mouseY = -9999;
-    const onMove = (e: PointerEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    };
-    const onLeave = () => {
-      mouseX = mouseY = -9999;
-    };
-
-    let t = 0;
-    let last = performance.now();
-    let raf = 0;
-    let running = true;
-
-    const targetOf = (i: number, out: { x: number; y: number }) => {
-      const { cx, cy } = layout();
-      if (i < AMBIENT || scattered) {
-        const k = i < AMBIENT ? i : i % AMBIENT;
-        const ax = i < AMBIENT ? amb[k * 2] : (Math.sin(i * 12.9898) * 43758.5453) % 1;
-        const ay = i < AMBIENT ? amb[k * 2 + 1] : (Math.sin(i * 78.233) * 12543.123) % 1;
-        out.x = Math.abs(ax) * W + Math.sin(t * 0.07 + phase[i]) * 40;
-        out.y = Math.abs(ay) * H + Math.cos(t * 0.05 + phase[i]) * 40;
-        return;
-      }
-      out.x = cx + target[i * 2] + (still ? 0 : Math.sin(t * 0.9 + phase[i]) * 1.6);
-      out.y = cy + target[i * 2 + 1] + (still ? 0 : Math.cos(t * 0.7 + phase[i]) * 1.6);
-    };
-
-    const o = { x: 0, y: 0 };
-    const snap = () => {
-      for (let i = 0; i < N; i++) {
-        targetOf(i, o);
-        pos[i * 3] = o.x;
-        pos[i * 3 + 1] = o.y;
-      }
-      posAttr.needsUpdate = true;
-      renderer.render(scene, camera);
-    };
-
-    const frame = (now: number) => {
-      raf = requestAnimationFrame(frame);
-      if (!running) return;
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-      t += dt;
-      const ease = 1 - Math.pow(0.06, dt);
-      for (let i = 0; i < N; i++) {
-        targetOf(i, o);
-        let x = pos[i * 3];
-        let y = pos[i * 3 + 1];
-        x += (o.x - x) * ease * speed[i];
-        y += (o.y - y) * ease * speed[i];
-        const dx = x - mouseX;
-        const dy = y - mouseY;
-        const d2 = dx * dx + dy * dy;
-        if (d2 < 14400) {
-          const f = (1 - d2 / 14400) * 9;
-          const d = Math.sqrt(d2) || 1;
-          x += (dx / d) * f;
-          y += (dy / d) * f;
-        }
-        pos[i * 3] = x;
-        pos[i * 3 + 1] = y;
-        angle[i] += spin[i] * dt;
-      }
-      posAttr.needsUpdate = true;
-      angAttr.needsUpdate = true;
-      renderer.render(scene, camera);
-    };
-
-    /* seção ativa */
     const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-shape]'));
     const ratios = new Map<Element, number>();
     const io = new IntersectionObserver(
@@ -389,82 +464,126 @@ export function Constellation() {
           }
         }
         if (!best) return;
-        const next: Shape = {
-          kind: (best.dataset.shape as Kind) || 'scatter',
-          text: best.dataset.text || '',
-          side: (best.dataset.side as Shape['side']) || 'right',
-        };
-        if (next.kind !== shape.kind || next.text !== shape.text || next.side !== shape.side) {
-          shape = next;
-          reshape();
-        }
+        current = { kind: (best.dataset.shape as Kind) || 'scatter', text: best.dataset.text || '', side: (best.dataset.side as Shape['side']) || 'right' };
+        apply();
       },
       { threshold: [0, 0.15, 0.3, 0.5, 0.7, 0.9, 1], rootMargin: '-30% 0px -30% 0px' },
     );
     sections.forEach((s) => io.observe(s));
-
-    let brandTimer = 0;
+    let timer = 0;
     const onBrand = (e: Event) => {
       brand = String((e as CustomEvent<string>).detail || '').trim();
-      clearTimeout(brandTimer);
-      brandTimer = window.setTimeout(() => {
-        if (shape.kind === 'brand') reshape();
-      }, 220);
+      clearTimeout(timer);
+      timer = window.setTimeout(apply, 220);
     };
-
-    const onResize = () => {
-      W = innerWidth;
-      H = innerHeight;
-      renderer.setSize(W, H);
-      camera.right = W;
-      camera.bottom = H;
-      camera.updateProjectionMatrix();
-      reshape();
-    };
-    const onVis = () => {
-      running = !document.hidden;
-      last = performance.now();
-    };
-
-    addEventListener('pointermove', onMove, { passive: true });
-    document.addEventListener('pointerleave', onLeave);
-    addEventListener('resize', onResize);
     addEventListener('dala:brand', onBrand);
-    document.addEventListener('visibilitychange', onVis);
-    reshape();
-    if (still) {
-      // movimento reduzido: sem animação contínua, só redesenha quando a forma muda
-      const rerender = () => snap();
-      addEventListener('scroll', rerender, { passive: true });
-      snap();
-      return () => {
-        removeEventListener('scroll', rerender);
-        io.disconnect();
-        removeEventListener('resize', onResize);
-        removeEventListener('dala:brand', onBrand);
-        renderer.dispose();
-        geo.dispose();
-        mat.dispose();
-        renderer.domElement.remove();
-      };
-    }
-    raf = requestAnimationFrame(frame);
-
+    const onScroll = () => eng.still && eng.rerender();
+    addEventListener('scroll', onScroll, { passive: true });
     return () => {
-      cancelAnimationFrame(raf);
-      clearTimeout(brandTimer);
+      clearTimeout(timer);
       io.disconnect();
-      removeEventListener('pointermove', onMove);
-      document.removeEventListener('pointerleave', onLeave);
-      removeEventListener('resize', onResize);
       removeEventListener('dala:brand', onBrand);
-      document.removeEventListener('visibilitychange', onVis);
-      renderer.dispose();
-      geo.dispose();
-      mat.dispose();
-      renderer.domElement.remove();
+      removeEventListener('scroll', onScroll);
+      eng.destroy();
     };
   }, []);
-
   return <div ref={host} aria-hidden className="pointer-events-none fixed inset-0 z-0 opacity-30 lg:opacity-100" />;
+}
+
+/** Paleta das IDs (versão clara): cores chapadas que funcionam sobre papel. */
+export const PALETTE_ID = ['#D2381F', '#D2381F', '#E8B23A', '#E8B23A', '#1FA3A0', '#0E5A3A', '#F26A1B', '#0B0B0B', '#5C4ADE'];
+
+/**
+ * Constelação dentro de uma caixa: forma a figura dada e se dispersa quando sai da tela.
+ * Ex.: <ConstellationBox kind="text" text="+100 MIL" />
+ */
+export function ConstellationBox({
+  kind,
+  text = '',
+  palette = PALETTE_ID,
+  additive = false,
+  count,
+  sizeRange = [6, 12],
+  fill = 0.92,
+  className = 'absolute inset-0',
+}: {
+  kind: Kind;
+  text?: string;
+  palette?: string[];
+  additive?: boolean;
+  count?: number;
+  sizeRange?: [number, number];
+  fill?: number;
+  className?: string;
+}) {
+  const host = useRef<HTMLDivElement>(null);
+  const eng = useRef<ReturnType<typeof createEngine>>(null);
+  const shapeRef = useRef<Shape>({ kind, text, side: 'center' });
+  const inView = useRef(false);
+
+  useEffect(() => {
+    const el = host.current;
+    if (!el) return;
+    const small = innerWidth < 768;
+    const e = createEngine(el, {
+      mode: 'element',
+      count: count ?? (small ? 1300 : 2600),
+      ambientRatio: 0.12,
+      palette,
+      additive,
+      sizeRange,
+      shapeAlpha: [0.85, 1],
+      ambientAlpha: [0.35, 0.6],
+      layout: (_s, W, H) => ({ cx: W / 2, cy: H / 2, bw: W * fill, bh: H * fill }),
+    });
+    if (!e) return;
+    eng.current = e;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        inView.current = entry.isIntersecting;
+        e.setVisible(entry.isIntersecting);
+        // ao entrar na tela, os triângulos se juntam; ao sair, se espalham de novo
+        e.setShape(entry.isIntersecting ? shapeRef.current : { kind: 'scatter', text: '', side: 'center' });
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      e.destroy();
+      eng.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    shapeRef.current = { kind, text, side: 'center' };
+    if (!inView.current) return;
+    const t = window.setTimeout(() => eng.current?.setShape(shapeRef.current), 180);
+    return () => clearTimeout(t);
+  }, [kind, text]);
+
+  return <div ref={host} aria-hidden className={`pointer-events-none ${className}`} />;
+}
+
+/** Campo de triângulos soltos sobre a página inteira, bem discreto. */
+export function AmbientField({ palette = PALETTE_ID, count = 140 }: { palette?: string[]; count?: number }) {
+  const host = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = host.current;
+    if (!el) return;
+    const e = createEngine(el, {
+      mode: 'window',
+      count,
+      ambientRatio: 1,
+      palette,
+      additive: false,
+      sizeRange: [7, 14],
+      shapeAlpha: [0.6, 0.8],
+      ambientAlpha: [0.35, 0.65],
+      layout: (_s, W, H) => ({ cx: W / 2, cy: H / 2, bw: W, bh: H }),
+    });
+    return () => e?.destroy();
+  }, [palette, count]);
+  return <div ref={host} aria-hidden className="pointer-events-none fixed inset-0 z-[45]" />;
 }
