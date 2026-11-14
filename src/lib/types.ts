@@ -54,6 +54,8 @@ export type GrandeurSettings = {
   statement?: string | null;
   /** Destaques curtos do espetáculo (pele Apple). */
   highlights?: { title: string; description?: string }[];
+  /** Título da galeria de fotos (pele Apple). */
+  gallery_title?: string | null;
 };
 export type AudienceSettings = { statement?: string | null };
 export type ResultsSettings = {
@@ -103,6 +105,10 @@ export type EventLook = {
   skin?: "editorial" | "apple";
   /** Endereço completo exibido junto às datas (pele Apple). */
   address?: string;
+  /** Texto sobre o local, exibido junto ao endereço. */
+  venueNote?: string;
+  /** Faixa de imagem larga (ex.: banner da campanha) antes da chamada final. */
+  strip?: { src: string; alt: string } | null;
   /** Escala dos títulos de seção (padrão 1). */
   titleScale?: number;
   /** Entrelinha dos títulos (padrão 0.88). */

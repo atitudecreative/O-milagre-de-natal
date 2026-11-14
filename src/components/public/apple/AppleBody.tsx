@@ -1,5 +1,8 @@
 import type { CtaSettings, EventBundle, GrandeurSettings, OpportunityRow, SectionRow, TierRow, TiersSettings } from "@/lib/types";
-import { formatCurrency } from "@/lib/format";
+import { compactNumber, formatCurrency } from "@/lib/format";
+import type { MediaRow } from "@/lib/types";
+import { EvImage } from "../EvImage";
+import { ClipReveal } from "../Reveal";
 import { Reveal } from "../Reveal";
 import { LeadForm } from "../LeadForm";
 import { TrackedLink } from "../TrackedLink";
@@ -22,9 +25,23 @@ function Head({ kicker, title, body, align = "center" }: { kicker?: string | nul
 }
 
 /* ---------- O musical ---------- */
-function Intro({ section }: { section: SectionRow }) {
+function Photo({ m, className, sizes, priority }: { m: MediaRow; className: string; sizes: string; priority?: boolean }) {
+  return (
+    <figure className="flex flex-col gap-3">
+      <ClipReveal className={`relative overflow-hidden rounded-[28px] bg-[var(--ap-mist)] ${className}`}>
+        <EvImage src={m.url} alt={m.alt ?? ""} fill sizes={sizes} quality={80} priority={priority} className="object-cover" />
+      </ClipReveal>
+      {m.caption ? <figcaption className="ap-small ap-muted px-1">{m.caption}</figcaption> : null}
+    </figure>
+  );
+}
+
+function Intro({ bundle, section }: { bundle: EventBundle; section: SectionRow }) {
   const s = (section.settings ?? {}) as GrandeurSettings;
   const highlights = s.highlights ?? [];
+  const gallery = bundle.media.filter((m) => m.kind === "image" && m.in_gallery);
+  const lead = gallery.find((m) => m.featured) ?? gallery[0];
+  const rest = gallery.filter((m) => m !== lead);
   return (
     <>
       <section id="o-evento" className="ap-section">
@@ -35,6 +52,11 @@ function Intro({ section }: { section: SectionRow }) {
             {section.body ? <p className="ap-lead max-w-2xl">{section.body}</p> : null}
           </Reveal>
         </div>
+        {lead ? (
+          <div className="ap-wrap ap-wide mt-12 md:mt-16">
+            <Photo m={lead} className="aspect-[4/3] sm:aspect-[21/9]" sizes="(min-width: 1240px) 1200px, 100vw" />
+          </div>
+        ) : null}
       </section>
       {highlights.length ? (
         <section className="ap-band ap-section" aria-label="Destaques do musical">
@@ -58,7 +80,37 @@ function Intro({ section }: { section: SectionRow }) {
           </div>
         </section>
       ) : null}
+      {rest.length ? (
+        <section className="ap-section" aria-label="Galeria">
+          <div className="ap-wrap ap-wide">
+            {s.gallery_title ? (
+              <Reveal className="mb-10 flex flex-col gap-3 md:mb-14">
+                <h2 className="ap-h2 max-w-3xl">{s.gallery_title}</h2>
+              </Reveal>
+            ) : null}
+            <div className="grid gap-5 md:grid-cols-2">
+              {rest.map((m, i) => {
+                const wide = rest.length % 2 === 1 && i === rest.length - 1;
+                return (
+                  <div key={m.id} className={wide ? "md:col-span-2" : ""}>
+                    <Photo m={m} className={wide ? "aspect-[4/3] sm:aspect-[21/9]" : "aspect-[16/10]"} sizes={wide ? "(min-width: 1240px) 1200px, 100vw" : "(min-width: 768px) 600px, 100vw"} />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      ) : null}
     </>
+  );
+}
+
+/* ---------- Faixa de imagem ---------- */
+function Strip({ src, alt }: { src: string; alt: string }) {
+  return (
+    <div className="relative w-full overflow-hidden bg-[#13171D]">
+      <EvImage src={src} alt={alt} width={2000} height={317} sizes="100vw" quality={85} className="block h-auto min-h-[180px] w-full object-cover object-left" />
+    </div>
   );
 }
 
@@ -78,28 +130,52 @@ function days(start?: string | null, end?: string | null) {
   return out;
 }
 
+function Stat({ label, value, unit, note, source, tone }: { label: string; value: number; unit?: string | null; note?: string | null; source?: string | null; tone: "ink" | "mist" }) {
+  const c = compactNumber(value);
+  return (
+    <Reveal className={`ap-card flex flex-col justify-between gap-10 ${tone === "ink" ? "ap-card-ink" : "ap-card-mist"}`}>
+      <p className={`ap-small ${tone === "ink" ? "text-[#a1a1a6]" : "ap-muted"}`}>{label}</p>
+      <div>
+        <p className="font-[family-name:var(--ap-display)] text-[clamp(64px,9vw,120px)] font-semibold leading-[0.9] tracking-[-0.03em] tabular-nums">
+          {value >= 1000 ? "+" : ""}{c.number}
+          {c.suffix ? <span className="ml-2 text-[0.4em] tracking-[-0.01em]">{c.suffix}</span> : null}
+        </p>
+        {unit ? <p className="ap-h3 mt-2">{unit}</p> : null}
+        {note ? <p className={`ap-body mt-3 ${tone === "ink" ? "text-[#a1a1a6]" : "ap-muted"}`}>{note}</p> : null}
+      </div>
+      {source ? <p className="ap-fine">{source}</p> : null}
+    </Reveal>
+  );
+}
+
 function Dates({ bundle, section }: { bundle: EventBundle; section: SectionRow }) {
   const { event } = bundle;
   const list = days(event.starts_on, event.ends_on);
-  const metric = bundle.metrics.find((m) => m.kind === "actual" && m.featured) ?? bundle.metrics.find((m) => m.kind === "actual");
-  if (!list.length && !metric) return null;
+  const actual = bundle.metrics.filter((m) => m.kind === "actual" && Number(m.value) >= 10);
+  const projection = bundle.metrics.filter((m) => m.kind === "projection");
+  const stats = [...actual.map((m) => ({ m, tone: "ink" as const })), ...projection.map((m) => ({ m, tone: "mist" as const }))];
+  if (!list.length && !stats.length) return null;
   return (
     <section id="numeros" className="ap-section">
       <div className="ap-wrap ap-wide">
         <Head kicker={section.eyebrow} title={section.title} body={section.body} />
-        <div className="mt-12 grid gap-5 md:mt-16 md:grid-cols-[1.1fr_2fr]">
-          {metric ? (
-            <Reveal className="ap-card ap-card-ink flex flex-col justify-between gap-12">
-              <p className="ap-fine">{metric.label}</p>
-              <p className="font-[family-name:var(--ap-display)] text-[clamp(96px,14vw,168px)] font-semibold leading-[0.9] tracking-[-0.03em] tabular-nums">
-                {metric.prefix}
-                {new Intl.NumberFormat("pt-BR").format(Number(metric.value))}
-                {metric.unit ? <span className="ml-3 text-[0.22em] font-medium tracking-[-0.01em] text-[#a1a1a6]">{metric.unit}</span> : null}
-              </p>
-              {metric.source ? <p className="ap-fine">Fonte: {metric.source}{metric.period ? ` · ${metric.period}` : ""}</p> : null}
-            </Reveal>
-          ) : null}
-          <ul className="grid grid-cols-2 gap-5">
+        {stats.length ? (
+          <div className={`mt-12 grid gap-5 md:mt-16 ${stats.length > 1 ? "md:grid-cols-2" : ""}`}>
+            {stats.map(({ m, tone }) => (
+              <Stat
+                key={m.id}
+                tone={tone}
+                label={m.kind === "projection" ? `Expectativa · ${m.period ?? ""}` : `${m.label}${m.period ? ` · ${m.period}` : ""}`}
+                value={Number(m.value)}
+                unit={m.unit}
+                note={m.description}
+                source={m.source ? `${m.kind === "projection" ? "Projeção" : "Fonte"}: ${m.source}` : null}
+              />
+            ))}
+          </div>
+        ) : null}
+        {list.length ? (
+          <ul className={`mt-5 grid grid-cols-2 gap-5 ${list.length >= 4 ? "md:grid-cols-4" : ""}`}>
             {list.map((d, i) => (
               <Reveal as="li" key={d.toISOString()} delay={i * 0.05} className="ap-card ap-card-mist flex flex-col gap-1">
                 <p className="ap-small ap-muted first-letter:uppercase">{WEEKDAY.format(d)}</p>
@@ -108,14 +184,15 @@ function Dates({ bundle, section }: { bundle: EventBundle; section: SectionRow }
               </Reveal>
             ))}
           </ul>
-        </div>
+        ) : null}
         {event.venue || bundle.look?.address ? (
           <Reveal className="mt-5 flex flex-col justify-between gap-6 rounded-[28px] bg-[var(--ap-mist)] p-7 md:flex-row md:items-center md:p-10">
-            <div>
+            <div className="max-w-2xl">
               <p className="ap-h3">{event.venue}</p>
               <p className="ap-body ap-muted mt-1">{bundle.look?.address ?? [event.city, event.state].filter(Boolean).join(", ")}</p>
+              {bundle.look?.venueNote ? <p className="ap-body mt-4">{bundle.look.venueNote}</p> : null}
             </div>
-            <TrackedLink href="#interesse" event="cta_click" label="datas_patrocinar" className="ap-pill self-start md:self-auto">Quero patrocinar</TrackedLink>
+            <TrackedLink href="#interesse" event="cta_click" label="datas_patrocinar" className="ap-pill shrink-0 self-start md:self-auto">Quero patrocinar</TrackedLink>
           </Reveal>
         ) : null}
       </div>
@@ -281,11 +358,16 @@ export function AppleBody({ bundle, sections }: { bundle: EventBundle; sections:
     <div className="ap">
       {sections.map((s) => {
         switch (s.type) {
-          case "grandeur": return <Intro key={s.id} section={s} />;
+          case "grandeur": return <Intro key={s.id} bundle={bundle} section={s} />;
           case "metrics": return <Dates key={s.id} bundle={bundle} section={s} />;
           case "opportunities": return <Opportunities key={s.id} bundle={bundle} section={s} />;
           case "tiers": return <Tiers key={s.id} bundle={bundle} section={s} />;
-          case "cta": return <Cta key={s.id} bundle={bundle} section={s} />;
+          case "cta": return (
+            <div key={s.id}>
+              {bundle.look?.strip ? <Strip src={bundle.look.strip.src} alt={bundle.look.strip.alt} /> : null}
+              <Cta bundle={bundle} section={s} />
+            </div>
+          );
           default: return null;
         }
       })}
