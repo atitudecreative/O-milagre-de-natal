@@ -1,12 +1,9 @@
-# Blueprint do Render (alternativa à Vercel).
-# As variáveis marcadas com sync: false precisam ser preenchidas no painel do Render
-# ANTES do primeiro build: as NEXT_PUBLIC_* são embutidas no código durante o build.
+# Blueprint do Render — landing page estática + rota do PDF (não precisa de banco).
 services:
   - type: web
-    name: palco
+    name: landing-patrocinio
     runtime: node
     plan: starter
-    region: oregon
     buildCommand: npm ci && npm run build
     startCommand: npm start
     healthCheckPath: /robots.txt
@@ -16,18 +13,4 @@ services:
       - key: NEXT_TELEMETRY_DISABLED
         value: "1"
       - key: NEXT_PUBLIC_SITE_URL
-        sync: false
-      - key: NEXT_PUBLIC_SUPABASE_URL
-        sync: false
-      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
-        sync: false
-      - key: SUPABASE_SERVICE_ROLE_KEY
-        sync: false
-      - key: APP_SECRET
-        generateValue: true
-      - key: RESEND_API_KEY
-        sync: false
-      - key: LEAD_NOTIFY_FROM
-        sync: false
-      - key: LEAD_NOTIFY_TO
         sync: false

@@ -1,13 +1,16 @@
 "use client";
-import Script from "next/script";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { TierRow } from "@/lib/types";
-import { FREE_EMAIL_DOMAINS, SEGMENTS } from "@/lib/validation/lead";
-import { configureTracking, firstReferrer, track, utm } from "@/lib/tracking/client";
+import { FREE_EMAIL_DOMAINS, SEGMENTS } from "@/lib/form";
+import { configureTracking, track } from "@/lib/tracking/client";
 
 type Props = {
   eventId: string;
-  slug: string;
+  eventName: string;
+  /** WhatsApp que recebe o contato (só dígitos, com DDI). */
+  whatsapp?: string | null;
+  /** E-mail usado quando não há WhatsApp. */
+  contactEmail?: string | null;
   tiers: Pick<TierRow, "id" | "name" | "quantity_total" | "quantity_sold">[];
   interests: string[];
   successMessage?: string | null;
@@ -17,7 +20,6 @@ type Props = {
 
 type Errors = Partial<Record<string, string>>;
 
-const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 function maskPhone(v: string) {
   const d = v.replace(/\D/g, "").slice(0, 13);
@@ -28,8 +30,8 @@ function maskPhone(v: string) {
   return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7, 11)}`;
 }
 
-export function LeadForm({ eventId, slug, tiers, interests, successMessage, disabled, buttonLabel }: Props) {
-  const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
+export function LeadForm({ eventId, eventName, whatsapp, contactEmail, tiers, interests, successMessage, disabled, buttonLabel }: Props) {
+  const [state, setState] = useState<"idle" | "done">("idle");
   const [errors, setErrors] = useState<Errors>({});
   const [serverError, setServerError] = useState<string | null>(null);
   const [tierId, setTierId] = useState("");
@@ -37,11 +39,9 @@ export function LeadForm({ eventId, slug, tiers, interests, successMessage, disa
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const started = useRef(false);
-  const mountedAt = useRef(0);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    mountedAt.current = Date.now();
     configureTracking({ eventId });
     const onCta = (e: Event) => {
       const d = (e as CustomEvent<{ tierId?: string; origin?: string }>).detail;
@@ -71,27 +71,17 @@ export function LeadForm({ eventId, slug, tiers, interests, successMessage, disa
     e.preventDefault();
     if (disabled) return;
     const fd = new FormData(e.currentTarget);
-    const u = utm();
     const payload = {
-      event_id: eventId,
-      tier_id: tierId || undefined,
-      full_name: String(fd.get("full_name") ?? ""),
-      company: String(fd.get("company") ?? ""),
-      job_title: String(fd.get("job_title") ?? ""),
-      email: String(fd.get("email") ?? ""),
-      phone: String(fd.get("phone") ?? ""),
+      full_name: String(fd.get("full_name") ?? "").trim(),
+      company: String(fd.get("company") ?? "").trim(),
+      job_title: String(fd.get("job_title") ?? "").trim(),
+      email: String(fd.get("email") ?? "").trim(),
+      phone: String(fd.get("phone") ?? "").trim(),
       segment: String(fd.get("segment") ?? ""),
       interest: String(fd.get("interest") ?? ""),
-      message: String(fd.get("message") ?? ""),
+      message: String(fd.get("message") ?? "").trim(),
       consent: fd.get("consent") === "on",
       marketing_opt_in: fd.get("marketing_opt_in") === "on",
-      website: String(fd.get("website") ?? ""),
-      elapsed_ms: Date.now() - mountedAt.current,
-      turnstile_token: String(fd.get("cf-turnstile-response") ?? "") || undefined,
-      cta_origin: origin,
-      referrer: firstReferrer() || undefined,
-      landing_path: window.location.pathname + window.location.search,
-      ...u,
     };
 
     // Validação imediata no cliente (o servidor valida de novo).
@@ -111,34 +101,40 @@ export function LeadForm({ eventId, slug, tiers, interests, successMessage, disa
       return;
     }
 
-    setState("sending");
-    setServerError(null);
-    try {
-      const res = await fetch("/api/leads", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string; fieldErrors?: Errors };
-      if (!res.ok || !json.ok) {
-        setErrors(json.fieldErrors ?? {});
-        setServerError(json.error ?? "Não foi possível enviar agora. Tente novamente em instantes.");
-        setState("error");
-        return;
-      }
-      // Conversão só após confirmação real do servidor.
-      track("form_submit", tierId ? tiers.find((t) => t.id === tierId)?.name : origin);
-      setState("done");
-    } catch {
-      setServerError("Falha de conexão. Verifique sua internet e tente novamente.");
-      setState("error");
+    // Sem banco de dados: o contato segue pelo WhatsApp (ou e-mail) do time comercial,
+    // com a mensagem pronta. Nada é armazenado neste site.
+    const tierName = tierId ? tiers.find((t) => t.id === tierId)?.name : undefined;
+    const lines = [
+      `Olá! Tenho interesse em patrocinar ${eventName}.`,
+      "",
+      `Nome: ${payload.full_name}`,
+      `Empresa: ${payload.company}`,
+      `Cargo: ${payload.job_title}`,
+      `E-mail: ${payload.email}`,
+      `Telefone: ${payload.phone}`,
+      `Segmento: ${payload.segment}`,
+      `Interesse: ${payload.interest}`,
+      tierName ? `Cota desejada: ${tierName}` : null,
+      payload.message ? `\nMensagem: ${payload.message}` : null,
+      payload.marketing_opt_in ? "\nAceito receber novidades sobre outros projetos." : null,
+    ].filter((l) => l !== null).join("\n");
+    const text = encodeURIComponent(lines);
+    const url = whatsapp
+      ? `https://wa.me/${whatsapp}?text=${text}`
+      : `mailto:${contactEmail ?? ""}?subject=${encodeURIComponent(`Patrocínio — ${eventName}`)}&body=${text}`;
+    if (!whatsapp && !contactEmail) {
+      setServerError("O contato comercial ainda não foi configurado.");
+      return;
     }
+    track("form_submit", tierName ?? origin);
+    window.open(url, whatsapp ? "_blank" : "_self", "noopener");
+    setState("done");
   }
 
   if (state === "done") {
     return (
       <div role="status" className="animate-[rise_0.9s_var(--ease-out-expo)_both] py-10">
-        <p className="ev-eyebrow mb-6">Recebemos seu contato</p>
+        <p className="ev-eyebrow mb-6">Quase lá</p>
         <p className="ev-display text-[clamp(2.4rem,5vw,4.4rem)]">Obrigado.</p>
         <p className="mt-6 max-w-lg text-lg leading-relaxed text-[var(--ev-muted)]">
           {successMessage || "Nossa equipe comercial vai analisar seu interesse e retornar em até 2 dias úteis."}
@@ -169,14 +165,6 @@ export function LeadForm({ eventId, slug, tiers, interests, successMessage, disa
 
   return (
     <form ref={formRef} onSubmit={onSubmit} noValidate className="grid grid-cols-1 gap-x-8 gap-y-7 sm:grid-cols-2" aria-describedby="lf-required">
-      {/* honeypot — invisível para pessoas */}
-      <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-        <label>
-          Não preencha
-          <input type="text" name="website" tabIndex={-1} autoComplete="off" />
-        </label>
-      </div>
-
       <div className="sm:col-span-2">
         {label("full_name", "Nome completo")}
         <input {...field("full_name")} className="ev-input" autoComplete="name" required maxLength={120} />
@@ -237,8 +225,8 @@ export function LeadForm({ eventId, slug, tiers, interests, successMessage, disa
         <label className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed">
           <input type="checkbox" name="consent" id="lf-consent" className="mt-1 h-4 w-4 shrink-0 accent-[var(--ev-accent)]" aria-invalid={errors.consent ? true : undefined} onFocus={onFirstInteraction} />
           <span>
-            Concordo com o tratamento dos meus dados para contato comercial sobre este evento, conforme a{" "}
-            <a href={`/eventos/${slug}/privacidade`} target="_blank" className="underline underline-offset-4">política de privacidade</a>. *
+            Concordo em enviar meus dados à equipe comercial deste evento para contato sobre patrocínio, conforme a{" "}
+            <a href="/privacidade" target="_blank" className="underline underline-offset-4">política de privacidade</a>. *
           </span>
         </label>
         {err("consent")}
@@ -248,25 +236,18 @@ export function LeadForm({ eventId, slug, tiers, interests, successMessage, disa
         </label>
       </div>
 
-      {TURNSTILE_SITE_KEY && !disabled ? (
-        <div className="sm:col-span-2">
-          <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="lazyOnload" />
-          <div className="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} data-theme="auto" data-language="pt-br" />
-        </div>
-      ) : null}
-
       {serverError ? (
         <p role="alert" className="text-sm text-[#ff8a8a] sm:col-span-2">{serverError}</p>
       ) : null}
 
       <div className="flex flex-col gap-4 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
         <p id="lf-required" className="ev-micro">* Campos obrigatórios</p>
-        <button type="submit" className="ev-btn w-full sm:w-auto" disabled={state === "sending" || disabled}>
-          {state === "sending" ? "Enviando…" : buttonLabel || "Enviar interesse"}
+        <button type="submit" className="ev-btn w-full sm:w-auto" disabled={disabled}>
+          {buttonLabel || "Enviar interesse"}
           <span className="ev-btn-arrow" aria-hidden>→</span>
         </button>
       </div>
-      {disabled ? <p className="ev-micro sm:col-span-2">Pré-visualização: o envio fica disponível após a publicação.</p> : null}
+      <p className="ev-micro sm:col-span-2">{whatsapp ? "O envio abre o WhatsApp do nosso time comercial com sua mensagem pronta." : "O envio abre seu e-mail com a mensagem pronta."}</p>
     </form>
   );
 }

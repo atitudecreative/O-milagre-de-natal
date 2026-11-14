@@ -1,4 +1,4 @@
-import type { Database, Tables } from "@/lib/supabase/database.types";
+import type { Database, Tables } from "@/lib/schema.types";
 
 export type AppRole = Database["public"]["Enums"]["app_role"];
 export type EventStatus = Database["public"]["Enums"]["event_status"];

@@ -74,7 +74,7 @@ export function Tracking({ eventId, slug, metaPixelId, gaId, gtmId, enabled }: P
           <p className="font-semibold">Cookies e medição</p>
           <p className="mt-2 leading-relaxed text-[var(--ev-muted)]">
             Usamos ferramentas de medição de terceiros para entender o interesse nesta apresentação. Elas só são ativadas com sua autorização.{" "}
-            <a href={`/eventos/${slug}/privacidade`} className="underline underline-offset-4">Saiba mais</a>.
+            <a href="/privacidade" className="underline underline-offset-4">Saiba mais</a>.
           </p>
           <div className="mt-4 flex gap-2">
             <button type="button" onClick={() => decide("granted")} className="ev-btn !min-h-10 flex-1 !px-4 !text-[0.7rem]">Aceitar</button>
