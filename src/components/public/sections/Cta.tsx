@@ -1,10 +1,11 @@
 import type { CtaSettings, EventBundle, SectionRow } from "@/lib/types";
+import { ArchOrnament } from "../ArchOrnament";
 import { EvImage } from "../EvImage";
 import { LeadForm } from "../LeadForm";
 import { Reveal } from "../Reveal";
 import { TrackedLink } from "../TrackedLink";
 
-export function Cta({ bundle, section }: { bundle: EventBundle; section: SectionRow }) {
+export function Cta({ bundle, section, ornament }: { bundle: EventBundle; section: SectionRow; ornament?: boolean }) {
   const { event, tiers } = bundle;
   const s = (section.settings ?? {}) as CtaSettings;
   const wa = event.whatsapp
@@ -19,10 +20,13 @@ export function Cta({ bundle, section }: { bundle: EventBundle; section: Section
           <div className="absolute inset-0 bg-[var(--ev-bg)]/85" />
         </div>
       ) : null}
+      {ornament ? (
+        <ArchOrnament className="pointer-events-none absolute left-1/2 top-10 -z-10 h-[min(90vh,880px)] w-auto -translate-x-1/2 text-[var(--ev-accent)] opacity-25" />
+      ) : null}
       <div className="ev-container ev-section">
         <Reveal>
           {section.eyebrow ? <p className="ev-eyebrow mb-8">{section.eyebrow}</p> : null}
-          <h2 className="ev-display max-w-[16ch] text-[clamp(3rem,9vw,9.5rem)]">
+          <h2 className="ev-display max-w-[16ch] text-[calc(clamp(3rem,9vw,9.5rem)*var(--ev-title-scale,1))]">
             {section.title || "Sua marca precisa estar onde as grandes experiências acontecem."}
           </h2>
         </Reveal>

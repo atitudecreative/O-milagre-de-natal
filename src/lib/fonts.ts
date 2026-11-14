@@ -17,6 +17,8 @@ export const FONT_OPTIONS: FontOption[] = [
   { family: "Inter", category: "sans", weights: "400;500;600;700", note: "Neutra, texto" },
   { family: "DM Sans", category: "sans", weights: "400;500;700", note: "Amigável" },
   { family: "Instrument Sans", category: "sans", weights: "400;500;700", note: "Editorial limpa" },
+  { family: "Cinzel Decorative", category: "display", weights: "700;900", note: "Capitulares ornamentadas, clássica" },
+  { family: "Cinzel", category: "serif", weights: "500;700;900", note: "Romana clássica" },
   { family: "Fraunces", category: "serif", weights: "400;600;900", note: "Serifada expressiva" },
   { family: "Playfair Display", category: "serif", weights: "400;700;900", note: "Clássica, gala" },
   { family: "Instrument Serif", category: "serif", weights: "400", note: "Editorial elegante" },

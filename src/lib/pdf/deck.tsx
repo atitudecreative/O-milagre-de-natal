@@ -293,6 +293,15 @@ function CoverPage({ c, n, bundle, image }: PageProps & { bundle: EventBundle; i
     { k: "Edição", v: edition },
   ].filter((m) => m.v);
 
+  // Arte oficial como capa: a imagem já traz título, data e local.
+  if (image && bundle.look?.posterHero) {
+    return (
+      <Slide c={c} t={t} n={n} padded={false}>
+        <Img src={image} style={{ position: "absolute", left: 0, top: 0, width: W, height: H, objectFit: "cover" }} />
+      </Slide>
+    );
+  }
+
   return (
     <Slide c={c} t={t} n={n} padded={false}>
       {image ? <Img src={image} style={{ position: "absolute", left: 0, top: 0, width: W, height: H }} /> : null}
@@ -1030,7 +1039,7 @@ async function buildDeck(bundle: EventBundle, fonts: DeckFonts) {
   const nextSet = (nextS?.settings ?? {}) as NextEditionSettings;
 
   const gallery = pickGallery(bundle.media);
-  const coverUrl = heroSet.image_desktop || gallery[0]?.url || event.og_image_url || null;
+  const coverUrl = bundle.look?.posterHero?.desktop || heroSet.image_desktop || gallery[0]?.url || event.og_image_url || null;
   const ctaUrl = ctaSet.background_image || null;
   const opportunities = isOn(oppS) ? bundle.opportunities.filter((o) => o.enabled) : [];
   const nextItems = isOn(nextS) ? (nextSet.items ?? []).filter((i) => i?.title) : [];

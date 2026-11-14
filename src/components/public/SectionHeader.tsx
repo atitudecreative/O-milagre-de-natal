@@ -20,7 +20,7 @@ export function SectionHeader({ index, eyebrow, title, body, align = "left", cla
               {eyebrow}
             </p>
           ) : null}
-          {title ? <h2 className="ev-display text-[clamp(2.4rem,6.4vw,6.2rem)]">{title}</h2> : null}
+          {title ? <h2 className="ev-display text-[calc(clamp(2.4rem,6.4vw,6.2rem)*var(--ev-title-scale,1))]">{title}</h2> : null}
         </Reveal>
         {body ? (
           <Reveal className="md:col-span-4 md:col-start-9 md:self-end" delay={0.15}>
@@ -40,7 +40,7 @@ export function SectionHeader({ index, eyebrow, title, body, align = "left", cla
             {eyebrow}
           </p>
         ) : null}
-        {title ? <h2 className="ev-display text-[clamp(2.4rem,6.4vw,6.2rem)]">{title}</h2> : null}
+        {title ? <h2 className="ev-display text-[calc(clamp(2.4rem,6.4vw,6.2rem)*var(--ev-title-scale,1))]">{title}</h2> : null}
         {body ? <p className="mt-8 max-w-2xl text-base leading-relaxed text-[var(--ev-muted)] md:text-lg">{body}</p> : null}
       </Reveal>
     </header>

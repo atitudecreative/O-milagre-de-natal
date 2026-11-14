@@ -10,10 +10,11 @@ import { TrackedLink } from "../TrackedLink";
 export function OpportunitiesList({ items }: { items: OpportunityRow[] }) {
   const [open, setOpen] = useState<string | null>(items[0]?.id ?? null);
   const active = items.find((i) => i.id === open) ?? items[0];
+  const hasImages = items.some((i) => i.image_url);
 
   return (
     <div className="grid gap-10 md:grid-cols-12">
-      <ol className="border-t border-[var(--ev-line)] md:col-span-7">
+      <ol className={`border-t border-[var(--ev-line)] ${hasImages ? "md:col-span-7" : "md:col-span-10 md:col-start-2"}`}>
         {items.map((o, i) => {
           const isOpen = o.id === open;
           return (
@@ -79,6 +80,7 @@ export function OpportunitiesList({ items }: { items: OpportunityRow[] }) {
         })}
       </ol>
 
+      {hasImages ? (
       <div className="hidden md:col-span-5 md:block">
         <div className="sticky top-28 aspect-[4/5] overflow-hidden rounded-[var(--ev-radius)] bg-[var(--ev-surface-2)]">
           <AnimatePresence mode="popLayout">
@@ -94,6 +96,7 @@ export function OpportunitiesList({ items }: { items: OpportunityRow[] }) {
           </AnimatePresence>
         </div>
       </div>
+      ) : null}
     </div>
   );
 }
