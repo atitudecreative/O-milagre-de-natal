@@ -71,20 +71,20 @@ export function EventNav({ name, logo, items }: { name: string; logo: string | n
             </ul>
           </nav>
           <div className="flex items-center gap-3">
-            <TrackedLink href="#interesse" event="cta_click" label="nav_patrocinar" className="ev-btn hidden !min-h-10 !px-4 !text-[0.7rem] sm:inline-flex">
+            <TrackedLink href="#interesse" event="cta_click" label="nav_patrocinar" className="ev-btn hidden !min-h-12 !px-6 !text-[0.8rem] sm:inline-flex">
               Patrocinar
             </TrackedLink>
             <button
               type="button"
-              className="flex h-10 w-10 items-center justify-center lg:hidden"
+              className="flex h-12 w-12 items-center justify-center rounded-[var(--ev-radius)] border border-[var(--ev-line-strong)] lg:hidden"
               aria-expanded={open}
               aria-controls="ev-menu"
               aria-label={open ? "Fechar menu" : "Abrir menu"}
               onClick={() => setOpen((o) => !o)}
             >
-              <span className="relative block h-3 w-6">
-                <span className={`absolute left-0 top-0 h-px w-6 bg-current transition-transform duration-500 ${open ? "translate-y-1.5 rotate-45" : ""}`} />
-                <span className={`absolute bottom-0 left-0 h-px w-6 bg-current transition-transform duration-500 ${open ? "-translate-y-1.5 -rotate-45" : ""}`} />
+              <span className="relative block h-4 w-7">
+                <span className={`absolute left-0 top-0 h-0.5 w-7 bg-current transition-transform duration-500 ${open ? "translate-y-[7px] rotate-45" : ""}`} />
+                <span className={`absolute bottom-0 left-0 h-0.5 w-7 bg-current transition-transform duration-500 ${open ? "-translate-y-[7px] -rotate-45" : ""}`} />
               </span>
             </button>
           </div>

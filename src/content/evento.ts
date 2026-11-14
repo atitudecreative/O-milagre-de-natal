@@ -60,6 +60,8 @@ export const EVENTO = bundle({
     heading_case: "none",
     corner_style: "soft",
     grain: true,
+    logo_url: "/kv/logo-atitude-branca.png", // logo branca, fundo transparente (menu)
+    logo_alt_url: "/kv/logo-atitude-branca.png", // rodapé
   }),
 
   look: {
