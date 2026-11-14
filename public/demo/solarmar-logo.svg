@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 96" fill="#F5EFE6">
+  <g transform="translate(48 48)">
+    <circle r="20" fill="#FF5B2E"/>
+    <g stroke="#F5EFE6" stroke-width="4" stroke-linecap="square">
+      <path d="M0-44v10M0 34v10M-44 0h10M34 0h10M-31-31l7 7M24 24l7 7M-31 31l7-7M24-24l7-7"/>
+    </g>
+  </g>
+  <text x="104" y="64" font-family="Impact, 'Arial Narrow Bold', 'Helvetica Neue', sans-serif" font-size="54" font-weight="700" letter-spacing="2">SOLARMAR</text>
+</svg>
