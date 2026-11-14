@@ -33,13 +33,13 @@ function Tier({ t, i }: { t: TierRow; i: number }) {
       as="article"
       delay={i * 0.06}
       className={`group relative flex min-h-full flex-col rounded-[var(--ev-radius)] p-7 md:p-9 ${
-        hl ? "bg-[var(--ev-accent)] text-[var(--ev-on-accent)]" : "border border-[var(--ev-line-strong)]"
+        hl ? "ev-solid bg-[var(--ev-accent)] text-[var(--ev-on-accent)]" : "border border-[var(--ev-line-strong)]"
       } ${soldOut ? "opacity-60" : ""}`}
     >
       <header className="flex items-start justify-between gap-4">
         <div>
           <p className={`text-xs font-semibold uppercase tracking-[0.2em] ${hl ? "opacity-75" : "text-[var(--ev-muted)]"}`}>Cota {String(i + 1).padStart(2, "0")}</p>
-          <h3 className="ev-display mt-3 text-[clamp(2.4rem,4vw,3.6rem)]">{t.name}</h3>
+          <h3 className="ev-display mt-3 text-[calc(clamp(2.4rem,4vw,3.6rem)*var(--ev-title-scale,1))] break-words">{t.name}</h3>
           {t.tagline ? <p className={`mt-3 text-sm ${hl ? "opacity-85" : "text-[var(--ev-muted)]"}`}>{t.tagline}</p> : null}
         </div>
         {t.image_url ? <EvImage src={t.image_url} alt="" width={64} height={64} className="h-14 w-14 object-contain" /> : null}

@@ -6,6 +6,7 @@ import { SECTION_ANCHOR, SECTION_LABEL } from "@/lib/labels";
 import { EventNav } from "./EventNav";
 import { Tracking } from "./Tracking";
 import { Hero } from "./sections/Hero";
+import { PosterHero } from "./sections/PosterHero";
 import { Metrics } from "./sections/Metrics";
 import { Grandeur } from "./sections/Grandeur";
 import { Audience } from "./sections/Audience";
@@ -32,7 +33,7 @@ const NAV_LABEL: Partial<Record<SectionType, string>> = {
 function hasContent(b: EventBundle, s: SectionRow): boolean {
   switch (s.type) {
     case "metrics": return b.metrics.some((m) => m.kind === "actual");
-    case "grandeur": return b.media.some((m) => m.in_gallery) || Boolean((s.settings as { aftermovie_url?: string }).aftermovie_url);
+    case "grandeur": return b.media.some((m) => m.in_gallery) || Boolean((s.settings as { aftermovie_url?: string; statement?: string }).aftermovie_url || (s.settings as { statement?: string }).statement || s.body);
     case "audience": return b.audience.length > 0;
     case "results": return b.results.length > 0;
     case "opportunities": return b.opportunities.some((o) => o.enabled);
@@ -49,6 +50,7 @@ export function EventPage({ bundle, preview = false }: { bundle: EventBundle; pr
   const visible = sections.filter((s) => s.type !== "footer" && hasContent(bundle, s));
   const fonts = googleFontsHref([branding.font_heading, branding.font_body]);
   const dark = luminance(branding.color_background) < 0.35;
+  const look = bundle.look ?? {};
 
   let n = 0;
   const numbered = new Map<string, number>();
@@ -62,7 +64,10 @@ export function EventPage({ bundle, preview = false }: { bundle: EventBundle; pr
   const footer = bundle.sections.find((s) => s.type === "footer");
 
   return (
-    <div className={`ev-root ${branding.grain ? "ev-grain" : ""} ${dark ? "ev-dark" : "ev-light"}`} style={brandVars(branding)}>
+    <div
+      className={`ev-root ${branding.grain ? "ev-grain" : ""} ${dark ? "ev-dark" : "ev-light"} ${look.metallic ? "ev-metal" : ""} ${look.starfield ? "ev-stars" : ""}`}
+      style={{ ...brandVars(branding), ...(look.displayLeading ? { ["--ev-leading" as string]: look.displayLeading } : {}), ...(look.titleScale ? { ["--ev-title-scale" as string]: look.titleScale } : {}) }}
+    >
       {fonts ? <link rel="stylesheet" href={fonts} precedence="default" /> : null}
       {branding.texture_url ? (
         <div aria-hidden className="pointer-events-none fixed inset-0 z-0 bg-repeat" style={{ backgroundImage: `url(${branding.texture_url})`, opacity: Number(branding.texture_opacity), backgroundSize: "600px" }} />
@@ -85,7 +90,7 @@ export function EventPage({ bundle, preview = false }: { bundle: EventBundle; pr
         {visible.map((s) => {
           const i = numbered.get(s.id) ?? 0;
           switch (s.type) {
-            case "hero": return <Hero key={s.id} bundle={bundle} section={s} />;
+            case "hero": return look.posterHero ? <PosterHero key={s.id} bundle={bundle} section={s} poster={look.posterHero} /> : <Hero key={s.id} bundle={bundle} section={s} />;
             case "metrics": return <Metrics key={s.id} bundle={bundle} section={s} index={i} />;
             case "grandeur": return <Grandeur key={s.id} bundle={bundle} section={s} index={i} />;
             case "audience": return <Audience key={s.id} bundle={bundle} section={s} index={i} />;
@@ -94,7 +99,7 @@ export function EventPage({ bundle, preview = false }: { bundle: EventBundle; pr
             case "tiers": return <Tiers key={s.id} bundle={bundle} section={s} index={i} />;
             case "sponsors": return <Sponsors key={s.id} bundle={bundle} section={s} index={i} />;
             case "next_edition": return <NextEdition key={s.id} bundle={bundle} section={s} index={i} />;
-            case "cta": return <Cta key={s.id} bundle={bundle} section={s} />;
+            case "cta": return <Cta key={s.id} bundle={bundle} section={s} ornament={look.archOrnament} />;
             default: return null;
           }
         })}

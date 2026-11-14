@@ -87,6 +87,22 @@ export type AudienceDatum = { label: string; value: number; code?: string };
 
 export type EventSponsorWithBrand = EventSponsorRow & { sponsor: SponsorRow };
 
+/** Ajustes visuais opcionais por evento (além das cores e fontes). */
+export type EventLook = {
+  /** Arte oficial usada como abertura (o título já faz parte da imagem). */
+  posterHero?: { desktop: string; mobile?: string; alt: string; width: number; height: number } | null;
+  /** Títulos e números com degradê metálico (cor primária → destaque). */
+  metallic?: boolean;
+  /** Céu estrelado sutil no fundo da página. */
+  starfield?: boolean;
+  /** Ornamento de arco com estrela (vitral) nas chamadas. */
+  archOrnament?: boolean;
+  /** Escala dos títulos de seção (padrão 1). */
+  titleScale?: number;
+  /** Entrelinha dos títulos (padrão 0.88). */
+  displayLeading?: number;
+};
+
 /** Tudo o que a página pública (e o PDF) precisa para renderizar um evento. */
 export type EventBundle = {
   event: EventRow;
@@ -100,6 +116,7 @@ export type EventBundle = {
   opportunities: OpportunityRow[];
   tiers: TierRow[];
   sponsors: EventSponsorWithBrand[];
+  look?: EventLook;
   tracking: { meta_pixel_id: string | null; ga_measurement_id: string | null; gtm_id: string | null } | null;
 };
 

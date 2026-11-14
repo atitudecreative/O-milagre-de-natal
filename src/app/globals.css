@@ -98,13 +98,53 @@
 .ev-display {
   font-family: var(--ev-font-heading);
   text-transform: var(--ev-heading-case);
-  line-height: 0.88;
+  line-height: var(--ev-leading, 0.88);
   letter-spacing: -0.01em;
   font-weight: 700;
   text-wrap: balance;
 }
 @media (max-width: 767px) {
-  .ev-display { line-height: 0.96; }
+  .ev-display { line-height: max(var(--ev-leading, 0.88), 0.96); }
+}
+
+/* Títulos e números metálicos (ex.: dourado/cobre de uma arte impressa) */
+.ev-metal .ev-display,
+.ev-metal .ev-num {
+  background-image: linear-gradient(
+    172deg,
+    color-mix(in srgb, var(--ev-primary) 80%, white) 0%,
+    var(--ev-primary) 28%,
+    var(--ev-accent) 64%,
+    color-mix(in srgb, var(--ev-accent) 68%, black) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.ev-metal .ev-solid .ev-display,
+.ev-metal .ev-solid .ev-num {
+  background-image: none;
+  color: inherit;
+}
+
+/* Céu estrelado sutil */
+.ev-stars::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.55;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.7) 50%, transparent 51%),
+    radial-gradient(1px 1px at 68% 8%, rgba(255, 255, 255, 0.55) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 84% 42%, rgba(255, 255, 255, 0.6) 50%, transparent 51%),
+    radial-gradient(1px 1px at 33% 64%, rgba(255, 255, 255, 0.45) 50%, transparent 51%),
+    radial-gradient(1px 1px at 52% 32%, rgba(255, 255, 255, 0.5) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 6% 86%, rgba(255, 255, 255, 0.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 91% 77%, rgba(255, 255, 255, 0.55) 50%, transparent 51%),
+    radial-gradient(1px 1px at 44% 94%, rgba(255, 255, 255, 0.4) 50%, transparent 51%);
+  background-size: 420px 420px;
 }
 .ev-eyebrow {
   font-family: var(--ev-font-body);

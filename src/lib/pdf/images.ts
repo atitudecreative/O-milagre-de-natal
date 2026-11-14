@@ -1,4 +1,6 @@
 import "server-only";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import sharp from "sharp";
 import { siteUrl } from "@/lib/env";
 
@@ -43,14 +45,26 @@ function looksLikeSvg(buf: Buffer, contentType: string | null, url: string) {
 
 async function loadOne(req: ImageRequest): Promise<PdfImage | null> {
   const maxWidth = req.maxWidth ?? (req.kind === "logo" ? 600 : 1800);
-  const url = resolveUrl(req.url, maxWidth);
+  // Arquivos de /public são lidos do disco (não depende do site estar acessível).
+  const local = req.url.startsWith("/") && !req.url.startsWith("//");
+  const url = local ? req.url : resolveUrl(req.url, maxWidth);
   if (!url) return null;
   try {
-    const res = await fetch(url, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS), headers: { Accept: "image/*" } });
-    if (!res.ok) return null;
-    const buf = Buffer.from(await res.arrayBuffer());
+    let buf: Buffer;
+    let contentType: string | null = null;
+    if (local) {
+      const publicDir = path.join(process.cwd(), "public");
+      const file = path.join(publicDir, decodeURIComponent(url.split("?")[0]));
+      if (!file.startsWith(publicDir + path.sep)) return null;
+      buf = await readFile(file);
+    } else {
+      const res = await fetch(url, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS), headers: { Accept: "image/*" } });
+      if (!res.ok) return null;
+      buf = Buffer.from(await res.arrayBuffer());
+      contentType = res.headers.get("content-type");
+    }
     if (!buf.length || buf.length > MAX_BYTES) return null;
-    const svg = looksLikeSvg(buf, res.headers.get("content-type"), url);
+    const svg = looksLikeSvg(buf, contentType, url);
     const input = sharp(buf, svg ? { density: 300 } : { failOn: "none" }).rotate();
 
     if (req.kind === "logo" || svg) {
