@@ -311,3 +311,218 @@ select.adm-input {
   background-position: right 0.75rem center;
 }
 .adm-scroll { scrollbar-width: thin; scrollbar-color: var(--color-line-strong) transparent; }
+
+/* =============================================================================
+   Pele "Apple": galeria branca, faixas #f5f5f7, cartões de 28px, sem sombras.
+   Aplicada a tudo o que vem depois da abertura (.ap). As variáveis --ev-* são
+   redefinidas para que componentes compartilhados (formulário) sigam o tema.
+   ============================================================================= */
+.ap {
+  --ap-white: #ffffff;
+  --ap-mist: #f5f5f7;
+  --ap-hairline: #d2d2d7;
+  --ap-ink: #1d1d1f;
+  --ap-slate: #6e6e73;
+  --ap-steel: #86868b;
+  --ap-link: #9a5a2b;      /* cobre da arte, escurecido para contraste em branco */
+  --ap-cta: #a8642f;
+  --ap-cta-hover: #8f5426;
+  --ap-display: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ap-text: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --ev-bg: var(--ap-white);
+  --ev-fg: var(--ap-ink);
+  --ev-muted: var(--ap-slate);
+  --ev-subtle: var(--ap-steel);
+  --ev-line: var(--ap-hairline);
+  --ev-line-strong: var(--ap-steel);
+  --ev-accent: var(--ap-cta);
+  --ev-on-accent: #ffffff;
+  --ev-surface: var(--ap-mist);
+  --ev-radius: 12px;
+  --ev-font-body: var(--ap-text);
+  --ev-font-heading: var(--ap-display);
+  --ev-heading-case: none;
+
+  position: relative;
+  z-index: 1;
+  background: var(--ap-white);
+  color: var(--ap-ink);
+  font-family: var(--ap-text);
+  letter-spacing: -0.022em;
+  -webkit-font-smoothing: antialiased;
+}
+.ap ::selection { background: #f0d9c2; color: var(--ap-ink); }
+
+.ap-wrap {
+  width: 100%;
+  max-width: 1024px;
+  margin-inline: auto;
+  padding-left: max(22px, env(safe-area-inset-left, 0px));
+  padding-right: max(22px, env(safe-area-inset-right, 0px));
+}
+.ap-wide { max-width: 1240px; }
+.ap-section { padding-block: clamp(72px, 10vw, 128px); }
+.ap-band { background: var(--ap-mist); }
+
+.ap-kicker {
+  font-family: var(--ap-display);
+  font-size: clamp(17px, 1.6vw, 21px);
+  font-weight: 600;
+  letter-spacing: 0.011em;
+  line-height: 1.2;
+  color: var(--ap-ink);
+}
+.ap-kicker-accent { color: var(--ap-link); }
+.ap-hero-title {
+  font-family: var(--ap-display);
+  font-size: clamp(40px, 6.4vw, 80px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.ap-h2 {
+  font-family: var(--ap-display);
+  font-size: clamp(32px, 4.6vw, 56px);
+  font-weight: 600;
+  line-height: 1.07;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+.ap-h3 {
+  font-family: var(--ap-display);
+  font-size: clamp(22px, 2.2vw, 28px);
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: 0.007em;
+  text-wrap: balance;
+}
+.ap-lead {
+  font-size: clamp(19px, 1.7vw, 21px);
+  line-height: 1.38;
+  letter-spacing: 0.011em;
+  color: var(--ap-slate);
+  font-weight: 400;
+}
+.ap-body { font-size: 17px; line-height: 1.47; letter-spacing: -0.022em; }
+.ap-small { font-size: 14px; line-height: 1.43; letter-spacing: -0.016em; }
+.ap-fine { font-size: 12px; line-height: 1.33; letter-spacing: -0.01em; color: var(--ap-slate); }
+.ap-strong { color: var(--ap-ink); font-weight: 600; }
+
+.ap-card {
+  background: var(--ap-white);
+  border-radius: 28px;
+  padding: clamp(28px, 3vw, 40px);
+}
+.ap-card-mist { background: var(--ap-mist); }
+.ap-card-ink { background: var(--ap-ink); color: #f5f5f7; }
+.ap-card-ink .ap-fine, .ap-card-ink .ap-muted { color: #a1a1a6; }
+.ap-muted { color: var(--ap-slate); }
+
+.ap-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 22px;
+  border-radius: 9999px;
+  background: var(--ap-cta);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -0.022em;
+  transition: background-color 0.2s ease;
+}
+.ap-pill:hover { background: var(--ap-cta-hover); }
+.ap-pill-sm { min-height: 36px; padding: 0 16px; font-size: 14px; }
+.ap-pill-ghost { background: transparent; color: var(--ap-link); box-shadow: inset 0 0 0 1px var(--ap-link); }
+.ap-pill-ghost:hover { background: rgba(154, 90, 43, 0.08); }
+.ap-card-ink .ap-pill-ghost { color: #f0c79c; box-shadow: inset 0 0 0 1px #f0c79c; }
+.ap-link { color: var(--ap-link); }
+.ap-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.ap-check { display: grid; grid-template-columns: 16px 1fr; gap: 10px; align-items: start; }
+.ap-check::before {
+  content: "";
+  margin-top: 0.42em;
+  width: 14px; height: 8px;
+  border-left: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  opacity: 0.55;
+}
+
+/* Formulário compartilhado (LeadForm) dentro da pele */
+.ap .ev-input {
+  background: var(--ap-white);
+  border: 1px solid var(--ap-hairline);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 17px;
+  letter-spacing: -0.022em;
+  margin-top: 6px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.ap .ev-input:focus { border-color: var(--ap-link); box-shadow: 0 0 0 4px rgba(154, 90, 43, 0.14); }
+.ap .ev-input[aria-invalid="true"] { border-color: #e30000; }
+.ap select.ev-input {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%2386868b' stroke-width='1.6'><path d='M1 1.5l5 5 5-5'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+.ap .ev-micro { font-size: 12px; letter-spacing: -0.01em; color: var(--ap-slate); text-transform: none; }
+.ap label.ev-micro { font-size: 14px; font-weight: 600; color: var(--ap-ink); letter-spacing: -0.016em; text-transform: none; }
+.ap .ev-eyebrow { font-family: var(--ap-display); font-size: 17px; letter-spacing: 0.01em; text-transform: none; color: var(--ap-link); font-weight: 600; }
+.ap .ev-display { font-family: var(--ap-display); text-transform: none; letter-spacing: -0.015em; font-weight: 600; line-height: 1.07; background: none; color: var(--ap-ink); }
+.ap .ev-btn {
+  min-height: 48px;
+  padding: 0 26px;
+  border-radius: 9999px;
+  background: var(--ap-cta);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -0.022em;
+  text-transform: none;
+  box-shadow: none;
+}
+.ap .ev-btn:hover { background: var(--ap-cta-hover); transform: none; box-shadow: none; }
+.ap .ev-btn .ev-btn-arrow { display: none; }
+
+/* Navegação clara depois da abertura */
+.ev-nav-light {
+  background: rgba(251, 251, 253, 0.8) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  color: #1d1d1f;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+}
+.ev-nav-light .ev-nav-logo { filter: brightness(0); }
+.ev-nav-light .ev-link-underline { color: rgba(0, 0, 0, 0.8) !important; }
+.ev-nav-light .ev-btn {
+  --btn-bg: #a8642f; --btn-fg: #fff;
+  border-radius: 9999px;
+  text-transform: none;
+  letter-spacing: -0.016em;
+  font-weight: 400;
+}
+.ev-nav-light [aria-controls="ev-menu"] { border-color: #d2d2d7; }
+.ev-bar-light {
+  background: rgba(251, 251, 253, 0.86);
+  border-color: #d2d2d7;
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+.ev-bar-light .ev-btn {
+  --btn-bg: #a8642f; --btn-fg: #fff;
+  min-height: 48px;
+  border-radius: 9999px;
+  text-transform: none;
+  letter-spacing: -0.022em;
+  font-weight: 400;
+  font-size: 17px;
+  box-shadow: none;
+}

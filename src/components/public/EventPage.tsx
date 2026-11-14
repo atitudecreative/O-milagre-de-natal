@@ -7,6 +7,7 @@ import { EventNav } from "./EventNav";
 import { Tracking } from "./Tracking";
 import { Hero } from "./sections/Hero";
 import { PosterHero } from "./sections/PosterHero";
+import { AppleBody } from "./apple/AppleBody";
 import { Metrics } from "./sections/Metrics";
 import { Grandeur } from "./sections/Grandeur";
 import { Audience } from "./sections/Audience";
@@ -48,7 +49,7 @@ export function EventPage({ bundle, preview = false }: { bundle: EventBundle; pr
   const { event, branding } = bundle;
   const sections = bundle.sections.filter((s) => s.enabled).sort((a, b) => a.position - b.position);
   const visible = sections.filter((s) => s.type !== "footer" && hasContent(bundle, s));
-  const fonts = googleFontsHref([branding.font_heading, branding.font_body]);
+  const fonts = googleFontsHref([branding.font_heading, branding.font_body, ...(bundle.look?.skin === "apple" ? ["Inter"] : [])]);
   const dark = luminance(branding.color_background) < 0.35;
   const look = bundle.look ?? {};
 
@@ -84,27 +85,38 @@ export function EventPage({ bundle, preview = false }: { bundle: EventBundle; pr
         </div>
       ) : null}
 
-      <EventNav name={event.name} logo={branding.logo_url} items={navItems} />
+      <EventNav name={event.name} logo={branding.logo_url} items={navItems} lightAfterHero={look.skin === "apple"} />
 
+      {look.skin === "apple" ? (
+        <main id="conteudo" className="relative z-[1]">
+          {visible.filter((s) => s.type === "hero").map((s) =>
+            look.posterHero ? <PosterHero key={s.id} bundle={bundle} section={s} poster={look.posterHero} /> : <Hero key={s.id} bundle={bundle} section={s} />,
+          )}
+          <AppleBody bundle={bundle} sections={visible.filter((s) => s.type !== "hero")} />
+        </main>
+      ) : (
+        <>
       <main id="conteudo" className="relative z-[1]">
-        {visible.map((s) => {
-          const i = numbered.get(s.id) ?? 0;
-          switch (s.type) {
-            case "hero": return look.posterHero ? <PosterHero key={s.id} bundle={bundle} section={s} poster={look.posterHero} /> : <Hero key={s.id} bundle={bundle} section={s} />;
-            case "metrics": return <Metrics key={s.id} bundle={bundle} section={s} index={i} />;
-            case "grandeur": return <Grandeur key={s.id} bundle={bundle} section={s} index={i} />;
-            case "audience": return <Audience key={s.id} bundle={bundle} section={s} index={i} />;
-            case "results": return <Results key={s.id} bundle={bundle} section={s} index={i} />;
-            case "opportunities": return <Opportunities key={s.id} bundle={bundle} section={s} index={i} />;
-            case "tiers": return <Tiers key={s.id} bundle={bundle} section={s} index={i} />;
-            case "sponsors": return <Sponsors key={s.id} bundle={bundle} section={s} index={i} />;
-            case "next_edition": return <NextEdition key={s.id} bundle={bundle} section={s} index={i} />;
-            case "cta": return <Cta key={s.id} bundle={bundle} section={s} ornament={look.archOrnament} />;
-            default: return null;
-          }
-        })}
-      </main>
-      {footer?.enabled !== false ? <div className="relative z-[1]"><Footer bundle={bundle} section={footer} /></div> : null}
+          {visible.map((s) => {
+            const i = numbered.get(s.id) ?? 0;
+            switch (s.type) {
+              case "hero": return look.posterHero ? <PosterHero key={s.id} bundle={bundle} section={s} poster={look.posterHero} /> : <Hero key={s.id} bundle={bundle} section={s} />;
+              case "metrics": return <Metrics key={s.id} bundle={bundle} section={s} index={i} />;
+              case "grandeur": return <Grandeur key={s.id} bundle={bundle} section={s} index={i} />;
+              case "audience": return <Audience key={s.id} bundle={bundle} section={s} index={i} />;
+              case "results": return <Results key={s.id} bundle={bundle} section={s} index={i} />;
+              case "opportunities": return <Opportunities key={s.id} bundle={bundle} section={s} index={i} />;
+              case "tiers": return <Tiers key={s.id} bundle={bundle} section={s} index={i} />;
+              case "sponsors": return <Sponsors key={s.id} bundle={bundle} section={s} index={i} />;
+              case "next_edition": return <NextEdition key={s.id} bundle={bundle} section={s} index={i} />;
+              case "cta": return <Cta key={s.id} bundle={bundle} section={s} ornament={look.archOrnament} />;
+              default: return null;
+            }
+          })}
+        </main>
+        {footer?.enabled !== false ? <div className="relative z-[1]"><Footer bundle={bundle} section={footer} /></div> : null}
+        </>
+      )}
 
       {!preview ? (
         <Tracking
