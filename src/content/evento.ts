@@ -65,6 +65,8 @@ export const EVENTO = bundle({
   }),
 
   look: {
+    skin: "apple", // abertura com a arte; o restante em estilo galeria branca
+    address: "Rua Sylvio da Rocha Pollis, 751 — Barra da Tijuca, Rio de Janeiro",
     posterHero: {
       desktop: "/kv/o-milagre-do-natal-16x9.webp",
       // Para o celular, adicione a arte vertical (story) em public/kv e informe aqui:
@@ -93,13 +95,18 @@ export const EVENTO = bundle({
       title: "A noite mais conhecida da história, contada no palco.",
       body: "Arautos anunciam a chegada, a família de Nazaré atravessa a cidade e a manjedoura se acende sob o céu estrelado. Cenário, figurinos, luz e música ao vivo para emocionar quem vem pela primeira vez — e quem volta todo ano.",
       settings: {
-        statement: "Uma história que atravessa gerações, contada para a família inteira — com a sua marca ao lado dela.",
+        statement: "Uma história que atravessa gerações, contada para a família inteira.",
+        highlights: [
+          { title: "Música ao vivo", description: "Um coro e música ao vivo conduzem o público pela noite do nascimento de Jesus." },
+          { title: "Cenário e figurinos", description: "A manjedoura, os arautos e a família de Nazaré ganham vida com cenografia, figurino e luz." },
+          { title: "Para toda a família", description: "Uma programação de Natal aberta à comunidade, para quem vem pela primeira vez e para quem volta todo ano." },
+        ],
       },
     }],
     ["metrics", {
       eyebrow: "Temporada 2026",
       title: "Quatro noites para celebrar o Natal.",
-      body: "Apresentações de sexta-feira a segunda-feira na Igreja Batista Atitude, na Barra da Tijuca.",
+      body: "Apresentações de sábado a terça-feira na Igreja Batista Atitude, na Barra da Tijuca.",
     }],
     ["opportunities", {
       eyebrow: "Oportunidades para marcas",

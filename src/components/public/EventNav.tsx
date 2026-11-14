@@ -6,7 +6,7 @@ import { TrackedLink } from "./TrackedLink";
 
 type Item = { href: string; label: string };
 
-export function EventNav({ name, logo, items }: { name: string; logo: string | null; items: Item[] }) {
+export function EventNav({ name, logo, items, lightAfterHero = false }: { name: string; logo: string | null; items: Item[]; lightAfterHero?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
@@ -51,12 +51,12 @@ export function EventNav({ name, logo, items }: { name: string; logo: string | n
       <header
         className={`fixed inset-x-0 top-0 z-50 transition-[transform,background-color,backdrop-filter] duration-500 ease-[var(--ease-out-expo)] ${
           hidden && !open ? "-translate-y-full" : ""
-        } ${scrolled ? "bg-[color-mix(in_srgb,var(--ev-bg)_82%,transparent)] backdrop-blur-xl" : ""}`}
+        } ${lightAfterHero && pastHero && !open ? "ev-nav-light" : scrolled ? "bg-[color-mix(in_srgb,var(--ev-bg)_82%,transparent)] backdrop-blur-xl" : ""}`}
       >
         <div className="ev-container flex h-16 items-center justify-between gap-6 md:h-20">
           <a href="#inicio" className="flex min-w-0 items-center gap-3" aria-label={`${name} — início`}>
             {logo ? (
-              <EvImage src={logo} alt="" width={160} height={48} className="h-8 w-auto max-w-[140px] object-contain md:h-10" priority />
+              <EvImage src={logo} alt="" width={160} height={48} className="ev-nav-logo h-8 w-auto max-w-[140px] object-contain md:h-10" priority />
             ) : (
               <span className="ev-display truncate text-xl">{name}</span>
             )}
@@ -124,13 +124,13 @@ export function EventNav({ name, logo, items }: { name: string; logo: string | n
 
       {/* Barra de conversão fixa no celular */}
       <div
-        className={`fixed inset-x-0 bottom-0 z-40 border-t border-[var(--ev-line)] bg-[color-mix(in_srgb,var(--ev-bg)_90%,transparent)] p-3 backdrop-blur-xl transition-transform duration-500 ease-[var(--ease-out-expo)] sm:hidden ${
+        className={`fixed inset-x-0 bottom-0 z-40 border-t p-3 backdrop-blur-xl transition-transform ${lightAfterHero ? "ev-bar-light" : "border-[var(--ev-line)] bg-[color-mix(in_srgb,var(--ev-bg)_90%,transparent)]"} duration-500 ease-[var(--ease-out-expo)] sm:hidden ${
           pastHero && !open && !atForm ? "translate-y-0" : "translate-y-full"
         }`}
         style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
       >
         <TrackedLink href="#interesse" event="cta_click" label="mobile_bar" className="ev-btn w-full">
-          Quero ser patrocinador <span aria-hidden>→</span>
+          Quero ser patrocinador {lightAfterHero ? null : <span aria-hidden>→</span>}
         </TrackedLink>
       </div>
     </>

@@ -52,6 +52,8 @@ export type GrandeurSettings = {
   aftermovie_poster?: string | null;
   aftermovie_title?: string | null;
   statement?: string | null;
+  /** Destaques curtos do espetáculo (pele Apple). */
+  highlights?: { title: string; description?: string }[];
 };
 export type AudienceSettings = { statement?: string | null };
 export type ResultsSettings = {
@@ -97,6 +99,10 @@ export type EventLook = {
   starfield?: boolean;
   /** Ornamento de arco com estrela (vitral) nas chamadas. */
   archOrnament?: boolean;
+  /** "apple": tudo depois da abertura em estilo galeria branca e cartões arredondados. */
+  skin?: "editorial" | "apple";
+  /** Endereço completo exibido junto às datas (pele Apple). */
+  address?: string;
   /** Escala dos títulos de seção (padrão 1). */
   titleScale?: number;
   /** Entrelinha dos títulos (padrão 0.88). */
