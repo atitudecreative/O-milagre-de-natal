@@ -1,0 +1,16 @@
+# Blueprint do Render — landing page estática + rota do PDF (não precisa de banco).
+services:
+  - type: web
+    name: landing-patrocinio
+    runtime: node
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /robots.txt
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false

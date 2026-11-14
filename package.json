@@ -7,26 +7,16 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
-    "db:start": "supabase start -x realtime,studio,edge-runtime,logflare,vector,supavisor,postgres-meta",
-    "db:stop": "supabase stop",
-    "db:reset": "supabase db reset",
-    "db:types": "supabase gen types typescript --local > src/lib/supabase/database.types.ts",
-    "admin:create": "node --env-file=.env.local scripts/create-admin.mjs",
-    "test:rls": "node --env-file=.env.local scripts/test-rls.mjs",
-    "test:e2e": "node scripts/test-e2e.cjs"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.9.0",
-    "@supabase/ssr": "^0.12.7",
-    "@supabase/supabase-js": "^2.119.0",
     "motion": "^12.43.0",
     "next": "16.4.6",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "^0.0.1",
-    "sharp": "^0.35.5",
-    "zod": "^4.6.7"
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "4.3.3",
@@ -35,7 +25,6 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
-    "supabase": "^3.1.0",
     "tailwindcss": "4.3.3",
     "typescript": "^5"
   },

@@ -4,7 +4,7 @@ import { LeadForm } from "../LeadForm";
 import { Reveal } from "../Reveal";
 import { TrackedLink } from "../TrackedLink";
 
-export function Cta({ bundle, section, preview }: { bundle: EventBundle; section: SectionRow; preview?: boolean }) {
+export function Cta({ bundle, section }: { bundle: EventBundle; section: SectionRow }) {
   const { event, tiers } = bundle;
   const s = (section.settings ?? {}) as CtaSettings;
   const wa = event.whatsapp
@@ -57,7 +57,7 @@ export function Cta({ bundle, section, preview }: { bundle: EventBundle; section
                 <div>
                   <dt className="ev-micro uppercase tracking-[0.18em]">Apresentação comercial</dt>
                   <dd className="mt-1">
-                    <TrackedLink href={`/eventos/${event.slug}/apresentacao.pdf`} event="deck_download" label="deck_pdf" className="ev-link-underline text-base" target="_blank">
+                    <TrackedLink href="/apresentacao.pdf" event="deck_download" label="deck_pdf" className="ev-link-underline text-base" target="_blank">
                       Baixar PDF →
                     </TrackedLink>
                   </dd>
@@ -68,12 +68,13 @@ export function Cta({ bundle, section, preview }: { bundle: EventBundle; section
           <div className="relative md:col-span-7 md:col-start-6">
             <LeadForm
               eventId={event.id}
-              slug={event.slug}
+              eventName={event.name}
+              whatsapp={event.whatsapp}
+              contactEmail={event.contact_email}
               tiers={tiers.filter((t) => t.enabled)}
               interests={event.form_interests}
               successMessage={event.form_success_message}
               buttonLabel={s.button_label}
-              disabled={preview || event.status !== "published"}
             />
           </div>
         </div>

@@ -1,6 +1,6 @@
 import Image, { type ImageProps } from "next/image";
 
-const OPTIMIZABLE = [/\.supabase\.co\/storage\/v1\/object\/public\//, /^https:\/\/images\.unsplash\.com\//, /^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?\/storage\/v1\/object\/public\//];
+const OPTIMIZABLE = [/^\/(?!\/)/, /^https:\/\/images\.unsplash\.com\//];
 
 export function canOptimize(src: string) {
   return !src.toLowerCase().split("?")[0].endsWith(".svg") && OPTIMIZABLE.some((r) => r.test(src));

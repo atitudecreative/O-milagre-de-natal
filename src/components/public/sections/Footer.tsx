@@ -51,7 +51,7 @@ export function Footer({ bundle, section }: { bundle: EventBundle; section?: Sec
             {links.map((l) => (
               <li key={l.url}><a className="ev-link-underline" href={l.url} target={l.url.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer">{l.label}</a></li>
             ))}
-            <li><a className="ev-link-underline" href={`/eventos/${event.slug}/privacidade`}>Política de privacidade</a></li>
+            <li><a className="ev-link-underline" href="/privacidade">Política de privacidade</a></li>
             <li><button type="button" data-consent-open className="ev-link-underline text-left">Preferências de cookies</button></li>
           </ul>
         </div>

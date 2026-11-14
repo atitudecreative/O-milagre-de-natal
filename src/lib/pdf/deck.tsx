@@ -942,7 +942,7 @@ function ContactPage({ c, n, bundle, section, image }: PageProps & { bundle: Eve
   const { base, fonts, radius } = c;
   const t = base;
   const { event } = bundle;
-  const url = `${siteUrl()}/eventos/${event.slug}`;
+  const url = siteUrl();
   const wa = event.whatsapp ? event.whatsapp.replace(/\D/g, "") : "";
   const rows = [
     { k: "Contato", v: event.contact_name, href: undefined },

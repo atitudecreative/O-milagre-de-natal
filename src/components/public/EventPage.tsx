@@ -75,7 +75,7 @@ export function EventPage({ bundle, preview = false }: { bundle: EventBundle; pr
       ) : null}
       {event.is_demo ? (
         <div className="relative z-[55] bg-[var(--ev-fg)] px-4 py-2 text-center text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[var(--ev-bg)]">
-          Evento demonstrativo · identidade, imagens e números fictícios para teste da plataforma
+          Evento demonstrativo · identidade, imagens e números fictícios
         </div>
       ) : null}
 
@@ -94,7 +94,7 @@ export function EventPage({ bundle, preview = false }: { bundle: EventBundle; pr
             case "tiers": return <Tiers key={s.id} bundle={bundle} section={s} index={i} />;
             case "sponsors": return <Sponsors key={s.id} bundle={bundle} section={s} index={i} />;
             case "next_edition": return <NextEdition key={s.id} bundle={bundle} section={s} index={i} />;
-            case "cta": return <Cta key={s.id} bundle={bundle} section={s} preview={preview} />;
+            case "cta": return <Cta key={s.id} bundle={bundle} section={s} />;
             default: return null;
           }
         })}
