@@ -160,6 +160,9 @@ npm run admin:create -- comercial@palco.local "Palco-2026-comercial" "Carla Come
 
 4. Configure o domínio próprio e atualize `NEXT_PUBLIC_SITE_URL`.
 
+### 3.3 Alternativa: Render
+O repositório inclui um `render.yaml`. No Render, use **New → Blueprint** e aponte para o repositório, ou crie um Web Service com build `npm ci && npm run build` e start `npm start`. Preencha as variáveis da seção 4 **antes do primeiro build**: as `NEXT_PUBLIC_*` são embutidas no código durante o build, então alterá-las depois exige um novo deploy.
+
 > O `next.config.ts` libera imagens de `*.supabase.co` e `images.unsplash.com`. Para outra CDN de imagens, adicione-a em `images.remotePatterns`.
 
 ---
