@@ -1,18 +1,25 @@
 import Link from "next/link";
 import { createPublicClient } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/env";
 import { EvImage } from "@/components/public/EvImage";
 import { eventDateLabel } from "@/lib/format";
 import type { HeroSettings } from "@/lib/types";
 
 export const revalidate = 300;
 
-export default async function Home() {
-  const supabase = createPublicClient();
-  const { data: events } = await supabase
+async function loadEvents() {
+  // Sem Supabase configurado (ex.: build sem variáveis), a página renderiza vazia em vez de quebrar.
+  if (!isSupabaseConfigured) return [];
+  const { data } = await createPublicClient()
     .from("events")
     .select("id, slug, name, tagline, starts_on, ends_on, date_label, city, state, is_demo, event_sections(type, settings)")
     .eq("status", "published")
     .order("starts_on", { ascending: true });
+  return data ?? [];
+}
+
+export default async function Home() {
+  const events = await loadEvents();
 
   return (
     <main className="min-h-dvh bg-ink text-paper">

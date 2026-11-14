@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { SUPABASE_ANON_KEY, SUPABASE_URL } from "@/lib/env";
+import { SUPABASE_ANON_KEY, SUPABASE_URL, isSupabaseConfigured } from "@/lib/env";
 
 /**
  * Renova a sessão do Supabase e protege /admin.
@@ -8,6 +8,8 @@ import { SUPABASE_ANON_KEY, SUPABASE_URL } from "@/lib/env";
  */
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
+  // Sem Supabase configurado não há sessão para renovar (as páginas mostram o erro de configuração).
+  if (!isSupabaseConfigured) return response;
 
   const supabase = createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     cookies: {

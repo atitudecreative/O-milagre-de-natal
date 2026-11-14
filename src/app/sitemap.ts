@@ -1,11 +1,13 @@
 import type { MetadataRoute } from "next";
 import { createPublicClient } from "@/lib/supabase/server";
-import { siteUrl } from "@/lib/env";
+import { isSupabaseConfigured, siteUrl } from "@/lib/env";
 
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteUrl();
+  // Sem Supabase configurado (ex.: build sem variáveis), publica só a raiz em vez de quebrar o build.
+  if (!isSupabaseConfigured) return [{ url: base, changeFrequency: "weekly", priority: 0.5 }];
   const { data } = await createPublicClient().from("events").select("slug, updated_at, noindex, is_demo").eq("status", "published");
   return [
     { url: base, changeFrequency: "weekly", priority: 0.5 },
