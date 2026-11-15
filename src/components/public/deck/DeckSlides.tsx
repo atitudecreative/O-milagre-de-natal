@@ -4,7 +4,9 @@ import { LeadForm } from "../LeadForm";
 import { TrackedLink } from "../TrackedLink";
 import { TiersViewTracker } from "../sections/TiersViewTracker";
 import { OpportunityShowcase } from "../light/OpportunityShowcase";
-import { Cell, TierButton, TierHead, Ticket, days } from "../light/LightBody";
+import { Ticket, days } from "../light/LightBody";
+import { KitPanel } from "./KitPanel";
+import { TierShowcase } from "./TierShowcase";
 import { DeckController } from "./DeckController";
 
 /**
@@ -33,7 +35,7 @@ function PosterSlide({ bundle, index }: { bundle: EventBundle; index: number }) 
   const hs = (hero?.settings ?? {}) as HeroSettings;
   if (!poster) return null;
   return (
-    <section id="inicio" data-slide={index} data-active="true" className="deck-slide flex flex-col bg-[#0b0d11]" aria-label={event.name}>
+    <section id="inicio" data-slide={index} data-active="true" className="deck-slide flex min-h-svh flex-col bg-[#0b0d11]" aria-label={event.name}>
       <h1 className="sr-only">{event.name}{event.tagline ? ` — ${event.tagline}` : ""}</h1>
       <Backdrop src={poster.desktop} dim={0.5} />
       <picture className="deck-kb absolute inset-0">
@@ -50,7 +52,7 @@ function PosterSlide({ bundle, index }: { bundle: EventBundle; index: number }) 
             {hs.secondary_label || "Conheça o projeto"}
           </TrackedLink>
         </div>
-        <p className="hidden text-[11px] uppercase tracking-[0.24em] text-white/55 md:block">Role, use as setas do teclado ou os pontos ao lado</p>
+        <p className="hidden text-[11px] uppercase tracking-[0.24em] text-white/55 md:block">Role para conhecer o musical</p>
       </div>
     </section>
   );
@@ -58,22 +60,8 @@ function PosterSlide({ bundle, index }: { bundle: EventBundle; index: number }) 
 
 function ImageSlide({ s, index }: { s: Extract<DeckSlide, { kind: "image" }>; index: number }) {
   return (
-    <section id={s.id} data-slide={index} className="deck-slide flex flex-col justify-center bg-[#0b0d11] px-5 py-24 md:p-0" aria-label={s.label}>
-      <Backdrop src={s.src} dim={0.5} />
-      {/* Celular: a página do kit inteira + o texto do slide, legível */}
-      <div className="flex flex-col gap-7 md:hidden">
-        <div className="deck-kb relative aspect-video w-full overflow-hidden rounded-[6px] shadow-[0_24px_50px_rgba(0,0,0,0.55)]">
-          <EvImage src={s.src} alt={s.alt} fill sizes="100vw" quality={80} className="object-cover" />
-        </div>
-        <div className="flex flex-col gap-3 text-white">
-          <p className="deck-in text-[11px] font-semibold uppercase tracking-[0.22em] text-[#e3a873]" style={{ ["--d" as string]: 1 }}>{String(index).padStart(2, "0")} · {s.label}</p>
-          <p className="deck-in font-[Instrument_Sans,Inter,sans-serif] text-[22px] font-medium leading-snug tracking-[-0.01em]" style={{ ["--d" as string]: 2 }}>{s.text}</p>
-        </div>
-      </div>
-      {/* Desktop: a página do kit como slide, com zoom lento */}
-      <div className="deck-kb deck-kb-soft absolute inset-x-[4vw] inset-y-[7vh] hidden md:block">
-        <EvImage src={s.src} alt="" fill sizes="92vw" quality={82} className="object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.55)]" />
-      </div>
+    <section id={s.id} data-slide={index} className="deck-slide bg-[#0b0d11] py-[7vh] md:py-[9vh]" aria-label={s.label}>
+      <KitPanel src={s.src} alt={s.alt} index={index} label={s.label} text={s.text} />
       <div className="sr-only">
         <h2>{s.label}</h2>
         <p className="hidden md:block">{s.text}</p>
@@ -86,7 +74,7 @@ function SessionsSlide({ bundle, s, index }: { bundle: EventBundle; s: PanelSlid
   const { event } = bundle;
   const list = days(event.starts_on, event.ends_on);
   return (
-    <section id={s.id} data-slide={index} className="deck-slide flex items-center bg-[#171b22] py-24" aria-label={s.label}>
+    <section id={s.id} data-slide={index} className="deck-slide bg-[#171b22] py-[14vh]" aria-label={s.label}>
       <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(201,139,87,0.16),transparent_60%)]" />
       <div className="lt lt-dark w-full">
         <div className="lt-wrap">
@@ -117,7 +105,7 @@ function OpportunitiesSlide({ bundle, s, index }: { bundle: EventBundle; s: Pane
   const items = bundle.opportunities.filter((o) => o.enabled);
   if (!items.length) return null;
   return (
-    <section id={s.id} data-slide={index} className="deck-slide flex items-center bg-[#0f1217] py-24" aria-label={s.label}>
+    <section id={s.id} data-slide={index} className="deck-slide bg-[#0f1217] py-[14vh]" aria-label={s.label}>
       <div className="lt lt-dark w-full">
         <div className="lt-wrap">
           <div className="mb-8 flex flex-col gap-4 md:mb-10">
@@ -135,12 +123,10 @@ function OpportunitiesSlide({ bundle, s, index }: { bundle: EventBundle; s: Pane
 
 function TiersSlide({ bundle, s, index }: { bundle: EventBundle; s: PanelSlide; index: number }) {
   const tiers = bundle.tiers.filter((t) => t.enabled);
-  const settings = bundle.sections.find((x) => x.type === "tiers")?.settings as { comparison?: { label: string; values: string[] }[]; note?: string } | undefined;
-  const rows = settings?.comparison ?? [];
+  const settings = bundle.sections.find((x) => x.type === "tiers")?.settings as { note?: string } | undefined;
   if (!tiers.length) return null;
-  const hl = (i: number) => (tiers[i]?.highlight ? "lt-col-hl" : "");
   return (
-    <section id={s.id} data-slide={index} className="deck-slide flex items-center bg-[#0b0d11] py-24" aria-label={s.label}>
+    <section id={s.id} data-slide={index} className="deck-slide bg-[#0b0d11] py-[14vh]" aria-label={s.label}>
       <TiersViewTracker />
       {s.bg ? <Backdrop src={s.bg} dim={0.82} /> : null}
       <div className="lt lt-dark w-full">
@@ -152,30 +138,8 @@ function TiersSlide({ bundle, s, index }: { bundle: EventBundle; s: PanelSlide; 
             </div>
             {s.body ? <p className="lt-body deck-in md:col-span-4 md:col-start-9" style={{ ["--d" as string]: 2 }}>{s.body}</p> : null}
           </div>
-          <div className="deck-in -mx-5 overflow-x-auto px-5 md:mx-0 md:px-0" style={{ ["--d" as string]: 3 }}>
-            <table className="lt-table lt-table-compact min-w-[560px]">
-              <caption className="sr-only">Comparativo das cotas de patrocínio</caption>
-              <thead>
-                <tr>
-                  <th scope="col" className="w-[34%] align-bottom"><span className="lt-label">Contrapartidas</span></th>
-                  {tiers.map((t, i) => <th key={t.id} scope="col" className={`!text-left align-bottom ${hl(i)}`}><TierHead t={t} /></th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.label}>
-                    <th scope="row" className="lt-small font-normal text-[var(--lt-ink)]">{r.label}</th>
-                    {tiers.map((t, i) => <td key={t.id} className={`!text-left ${hl(i)}`}><Cell value={r.values[i] ?? "—"} /></td>)}
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td />
-                  {tiers.map((t, i) => <td key={t.id} className={`!border-b-0 !text-left ${hl(i)}`}><TierButton t={t} /></td>)}
-                </tr>
-              </tfoot>
-            </table>
+          <div className="deck-in" style={{ ["--d" as string]: 3 }}>
+            <TierShowcase tiers={tiers} />
           </div>
           {settings?.note ? <p className="lt-fine mt-4">{settings.note}</p> : null}
         </div>
@@ -189,7 +153,7 @@ function FormSlide({ bundle, s, index }: { bundle: EventBundle; s: PanelSlide; i
   const cta = bundle.sections.find((x) => x.type === "cta");
   const cs = (cta?.settings ?? {}) as CtaSettings;
   return (
-    <section id={s.id ?? "interesse"} data-slide={index} className="deck-slide flex flex-col bg-[#0f1217] pt-24" aria-label={s.label}>
+    <section id={s.id ?? "interesse"} data-slide={index} className="deck-slide flex flex-col bg-[#0f1217] pt-[14vh]" aria-label={s.label}>
       {s.bg ? <Backdrop src={s.bg} dim={0.8} /> : null}
       <div className="lt lt-dark w-full flex-1">
         <div className="lt-wrap grid gap-10 pb-16 md:grid-cols-12 md:gap-12">
@@ -249,7 +213,7 @@ export function DeckSlides({ bundle }: { bundle: EventBundle }) {
   const slides = bundle.look?.slides ?? [];
   return (
     <>
-      <DeckController labels={slides.map((s) => s.label)} />
+      <DeckController />
       {slides.map((s, i) => {
         switch (s.kind) {
           case "poster": return <PosterSlide key={i} bundle={bundle} index={i} />;
