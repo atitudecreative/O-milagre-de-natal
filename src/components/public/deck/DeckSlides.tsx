@@ -138,9 +138,7 @@ function TiersSlide({ bundle, s, index }: { bundle: EventBundle; s: PanelSlide; 
             </div>
             {s.body ? <p className="lt-body deck-in md:col-span-4 md:col-start-9" style={{ ["--d" as string]: 2 }}>{s.body}</p> : null}
           </div>
-          <div className="deck-in" style={{ ["--d" as string]: 3 }}>
-            <TierShowcase tiers={tiers} />
-          </div>
+          <TierShowcase tiers={tiers} />
           {settings?.note ? <p className="lt-fine mt-4">{settings.note}</p> : null}
         </div>
       </div>
