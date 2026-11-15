@@ -12,6 +12,7 @@ export function TierShowcase({ tiers }: { tiers: TierRow[] }) {
   return (
     <div className="flex flex-col gap-6 md:gap-8">
       {tiers.map((t, i) => {
+        const bronze = t.name.trim().toLowerCase() === "bronze";
         const soldOut = t.quantity_total != null && t.quantity_sold >= t.quantity_total;
         return (
           <motion.article
@@ -20,7 +21,7 @@ export function TierShowcase({ tiers }: { tiers: TierRow[] }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className={`grid gap-10 border p-7 md:grid-cols-12 md:gap-12 md:p-12 ${t.highlight ? "border-[var(--lt-copper-cta)] bg-[rgba(201,139,87,0.08)]" : "lt-rule bg-[var(--lt-band)]"}`}
+            className={`grid gap-10 border p-7 md:grid-cols-12 md:gap-12 md:p-12 ${t.highlight ? "border-[var(--lt-copper-cta)] bg-[rgba(201,139,87,0.08)]" : bronze ? "tier-bronze" : "lt-rule bg-[var(--lt-band)]"}`}
           >
             <div className="flex flex-col gap-6 md:col-span-5">
               <div className="flex items-center gap-3">
@@ -36,7 +37,7 @@ export function TierShowcase({ tiers }: { tiers: TierRow[] }) {
               {soldOut ? (
                 <p className="lt-label">Cota comercializada</p>
               ) : (
-                <TrackedLink href="#interesse" event="cta_click" label={`cota:${t.name}`} tierId={t.id} className={`lt-btn self-start ${t.highlight ? "lt-btn-copper" : ""}`}>
+                <TrackedLink href="#interesse" event="cta_click" label={`cota:${t.name}`} tierId={t.id} className={`lt-btn self-start ${t.highlight ? "lt-btn-copper" : bronze ? "lt-btn-bronze" : ""}`}>
                   Quero a cota {t.name}
                 </TrackedLink>
               )}
