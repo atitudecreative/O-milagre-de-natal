@@ -129,12 +129,12 @@ function Filmstrip({ title, items }: { title?: string | null; items: MediaRow[] 
         {title ? <h2 className="lt-display lt-title-sm max-w-xl">{title}</h2> : <span />}
         <p className="lt-fine hidden shrink-0 sm:block">Arraste para o lado →</p>
       </div>
-      <ul className="lt-scroll-x flex gap-4 overflow-x-auto pb-2 pl-[max(20px,calc((100vw-1280px)/2+20px))] pr-5 md:gap-6">
-        {items.map((m, i) => (
-          <li key={m.id} className={`shrink-0 snap-start ${i % 2 ? "w-[82vw] md:w-[46vw]" : "w-[82vw] md:w-[34vw]"}`}>
+      <ul className="lt-scroll-x flex gap-4 overflow-x-auto pb-2 pl-[max(20px,calc((100vw_-_1280px)/2_+_20px))] pr-5 [scroll-padding-left:max(20px,calc((100vw_-_1280px)/2_+_20px))] md:gap-6">
+        {items.map((m) => (
+          <li key={m.id} className="w-[82vw] shrink-0 snap-start sm:w-[60vw] md:w-[42vw] lg:w-[36vw]">
             <figure className="flex flex-col gap-3">
-              <div className={`relative overflow-hidden bg-[var(--lt-band)] ${i % 2 ? "aspect-[16/10]" : "aspect-[4/3] md:aspect-[4/5]"}`}>
-                <EvImage src={m.url} alt={m.alt ?? ""} fill sizes="(min-width: 768px) 46vw, 82vw" quality={80} className="object-cover transition-transform duration-[1.2s] ease-[var(--ease-out-expo)] hover:scale-[1.03]" />
+              <div className="relative aspect-[4/3] overflow-hidden bg-[var(--lt-band)]">
+                <EvImage src={m.url} alt={m.alt ?? ""} fill sizes="(min-width: 1024px) 36vw, (min-width: 768px) 42vw, 82vw" quality={80} className="object-cover transition-transform duration-[1.2s] ease-[var(--ease-out-expo)] hover:scale-[1.03]" />
               </div>
               {m.caption ? (
                 <figcaption className="flex items-baseline justify-between gap-4">
