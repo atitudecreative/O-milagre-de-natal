@@ -67,7 +67,7 @@ export const EVENTO = bundle({
   }),
 
   look: {
-    skin: "apple", // abertura com a arte; o restante em estilo galeria branca
+    skin: "light", // abertura com a arte; o restante claro e editorial
     address: "Rua Sylvio da Rocha Pollis, 751 — Barra da Tijuca, Rio de Janeiro",
     venueNote: "Este ano, o Musical de Natal acontece em um local preparado para proporcionar uma experiência única e inesquecível para toda a família.",
     posterHero: {
@@ -102,6 +102,7 @@ export const EVENTO = bundle({
       body: "Um presente de Natal para o Rio de Janeiro. Música, cenário e emoção para quem vem pela primeira vez — e para quem volta todo ano.",
       settings: {
         statement: "Uma oportunidade estratégica de se conectar com um público que busca inspiração e valores familiares em um momento de celebração e renovação.",
+        statement_highlights: ["inspiração e valores", "celebração e renovação"],
         highlights: [
           { title: "Inspiração", description: "A história do nascimento de Jesus contada no palco, com música ao vivo, elenco e cenografia." },
           { title: "Valores familiares", description: "Um programa para pais, filhos e avós viverem juntos — o público que sua marca quer encontrar." },
@@ -123,8 +124,23 @@ export const EVENTO = bundle({
     ["tiers", {
       eyebrow: "Cotas de patrocínio",
       title: "Escolha como sua marca participa.",
-      body: "Três cotas com contrapartidas definidas. Fale com a equipe para montar a melhor proposta.",
-      settings: { note: "Valores conforme media kit da Striker Produções. Condições finais definidas em proposta comercial." },
+      body: "Compare o que cada cota entrega e escolha a presença ideal para a sua marca.",
+      settings: {
+        note: "Contrapartidas conforme media kit da Striker Produções. Condições finais definidas em proposta comercial.",
+        // Uma linha por contrapartida; valores na ordem das cotas (Bronze, Prata, Ouro). "✓" = incluído, "—" = não incluído.
+        comparison: [
+          { label: "Marca na comunicação", values: ["Digital", "Matérias digitais", "Todos os materiais oficiais"] },
+          { label: "Telão de LED nas sessões", values: ["—", "✓", "Exclusivo"] },
+          { label: "Citação da marca", values: ["No evento", "Nas sessões", "Sorteios e ações"] },
+          { label: "Área VIP", values: ["20 convidados", "30 convidados", "50 por sessão"] },
+          { label: "Sala VIP com coffee break", values: ["✓", "✓", "✓"] },
+          { label: "Valet de estacionamento", values: ["1 carro", "3 carros", "5 carros"] },
+          { label: "Ação de divulgação no evento", values: ["—", "✓", "✓"] },
+          { label: "Stand de divulgação", values: ["—", "—", "✓"] },
+          { label: "Visita ao backstage do elenco", values: ["—", "—", "✓"] },
+          { label: "Gravação de conteúdo com a marca", values: ["—", "—", "✓"] },
+        ],
+      },
     }],
     ["cta", {
       eyebrow: "Patrocine O Milagre do Natal",
@@ -150,8 +166,8 @@ export const EVENTO = bundle({
   media: media([
     { url: "/fotos/familias.webp", alt: "Famílias sorrindo na plateia sob uma chuva de confete", caption: "Um espetáculo que encanta famílias.", in_gallery: true, featured: true, credit: "Striker Produções" },
     { url: "/fotos/elenco.webp", alt: "Elenco do musical no palco com cenário de floresta iluminada e neve", caption: "Elenco em cena nos especiais de fim de ano de 2025.", in_gallery: true, credit: "Striker Produções" },
-    { url: "/fotos/palco.webp", alt: "Palco com painéis de LED, iluminação e faíscas diante do público", caption: "Telões de LED, luz e efeitos especiais.", in_gallery: true, credit: "Striker Produções" },
     { url: "/fotos/presepio.webp", alt: "Cena do presépio com Maria, José, o menino Jesus, pastores e animais", caption: "A cena do presépio de O Milagre do Natal.", in_gallery: true },
+    { url: "/fotos/palco.webp", alt: "Palco com painéis de LED, iluminação e faíscas diante do público", caption: "Telões de LED, luz e efeitos especiais.", in_gallery: true, credit: "Striker Produções" },
     { url: "/fotos/outdoor.webp", alt: "Outdoor com a arte da campanha O Milagre do Natal ao entardecer", caption: "Campanha O Milagre do Natal.", in_gallery: true },
   ]),
 
@@ -163,22 +179,22 @@ export const EVENTO = bundle({
   // Oportunidades — formatos que constam nas cotas do media kit
   // --------------------------------------------------------------------------
   opportunities: opportunities([
-    { category: "audiovisual", title: "Telão de LED", description: "Sua marca no telão de LED durante as sessões — com exclusividade na cota Ouro.", deliverables: ["Presença no telão de LED (Prata)", "Presença exclusiva no LED durante as sessões (Ouro)"] },
-    { category: "experience", title: "Área VIP e sala VIP", description: "Receba clientes e convidados com conforto, coffee break e valet de estacionamento.", deliverables: ["Área VIP de 20 a 50 convidados", "Sala VIP com coffee break", "Valet de estacionamento"] },
-    { category: "activation", title: "Ações durante o evento", description: "Citação da marca nas sessões, sorteios e ações de divulgação com o público presente.", deliverables: ["Citação da marca durante as sessões", "Sorteios e demais ações (Ouro)", "Ação de divulgação da marca"] },
-    { category: "digital_media", title: "Comunicação e conteúdo", description: "Presença nas comunicações digitais e em conteúdo gravado durante e depois do musical.", deliverables: ["Marca nas comunicações e matérias digitais", "Marca em todos os materiais oficiais (Ouro)", "Gravação de conteúdo com marca vinculada (Ouro)"] },
-    { category: "booth", title: "Stand e backstage", description: "Um stand de divulgação no musical e uma visita à área de backstage do elenco.", deliverables: ["Stand de divulgação no musical (Ouro)", "Visita à área backstage do elenco (Ouro)"] },
+    { category: "audiovisual", title: "Telão de LED", image_url: "/fotos/palco.webp", description: "Sua marca no telão de LED durante as sessões — com exclusividade na cota Ouro.", deliverables: ["Presença no telão de LED (Prata)", "Presença exclusiva no LED durante as sessões (Ouro)"] },
+    { category: "experience", title: "Área VIP e sala VIP", image_url: "/fotos/presepio.webp", description: "Receba clientes e convidados com conforto, coffee break e valet de estacionamento.", deliverables: ["Área VIP de 20 a 50 convidados", "Sala VIP com coffee break", "Valet de estacionamento"] },
+    { category: "activation", title: "Ações durante o evento", image_url: "/fotos/familias.webp", description: "Citação da marca nas sessões, sorteios e ações de divulgação com o público presente.", deliverables: ["Citação da marca durante as sessões", "Sorteios e demais ações (Ouro)", "Ação de divulgação da marca"] },
+    { category: "digital_media", title: "Comunicação e conteúdo", image_url: "/fotos/outdoor.webp", description: "Presença nas comunicações digitais e em conteúdo gravado durante e depois do musical.", deliverables: ["Marca nas comunicações e matérias digitais", "Marca em todos os materiais oficiais (Ouro)", "Gravação de conteúdo com marca vinculada (Ouro)"] },
+    { category: "booth", title: "Stand e backstage", image_url: "/fotos/elenco.webp", description: "Um stand de divulgação no musical e uma visita à área de backstage do elenco.", deliverables: ["Stand de divulgação no musical (Ouro)", "Visita à área backstage do elenco (Ouro)"] },
   ]),
 
   // --------------------------------------------------------------------------
   // Cotas — valores e contrapartidas do media kit
   // --------------------------------------------------------------------------
   tiers: tiers([
-    { name: "Bronze", tagline: "Presença digital e experiência VIP.", price: 10000, show_price: true,
+    { name: "Bronze", tagline: "Presença digital e experiência VIP.", price: 4000, show_price: true,
       deliverables: ["Marca nas comunicações digitais", "Citação da marca durante o evento", "Área VIP para 20 convidados", "Sala VIP com coffee break", "Valet de estacionamento para 1 carro"] },
-    { name: "Prata", tagline: "Visibilidade no telão e ação no evento.", price: 15000, show_price: true,
+    { name: "Prata", tagline: "Visibilidade no telão e ação no evento.", price: 6000, show_price: true,
       deliverables: ["Marca em matérias digitais", "Presença no telão de LED", "Citação da marca durante as sessões", "Área VIP para 30 convidados", "Valet de estacionamento para 3 carros", "Sala VIP com coffee break", "Ação de divulgação da marca durante o evento"] },
-    { name: "Ouro", tagline: "A presença mais completa no musical.", price: 25000, show_price: true, highlight: true,
+    { name: "Ouro", tagline: "A presença mais completa no musical.", price: 10000, show_price: true, highlight: true,
       deliverables: ["Marca em todos os materiais oficiais", "Presença no LED durante as sessões de forma exclusiva", "Citação da marca no musical (sorteios e demais ações)", "Área VIP para 50 convidados por sessão", "Valet de estacionamento para 5 carros", "Sala VIP com coffee break", "Visita à área backstage do elenco", "Gravação de conteúdo durante o musical com marca vinculada e pós-musical", "Ação de divulgação durante o evento", "Stand de divulgação no musical"] },
   ]),
 

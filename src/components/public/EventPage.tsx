@@ -7,7 +7,7 @@ import { EventNav } from "./EventNav";
 import { Tracking } from "./Tracking";
 import { Hero } from "./sections/Hero";
 import { PosterHero } from "./sections/PosterHero";
-import { AppleBody } from "./apple/AppleBody";
+import { LightBody } from "./light/LightBody";
 import { Metrics } from "./sections/Metrics";
 import { Grandeur } from "./sections/Grandeur";
 import { Audience } from "./sections/Audience";
@@ -49,7 +49,7 @@ export function EventPage({ bundle, preview = false }: { bundle: EventBundle; pr
   const { event, branding } = bundle;
   const sections = bundle.sections.filter((s) => s.enabled).sort((a, b) => a.position - b.position);
   const visible = sections.filter((s) => s.type !== "footer" && hasContent(bundle, s));
-  const fonts = googleFontsHref([branding.font_heading, branding.font_body, ...(bundle.look?.skin === "apple" ? ["Inter"] : [])]);
+  const fonts = googleFontsHref([branding.font_heading, branding.font_body, ...(bundle.look?.skin === "light" ? ["Inter", "Instrument Sans"] : [])]);
   const dark = luminance(branding.color_background) < 0.35;
   const look = bundle.look ?? {};
 
@@ -85,14 +85,14 @@ export function EventPage({ bundle, preview = false }: { bundle: EventBundle; pr
         </div>
       ) : null}
 
-      <EventNav name={event.name} logo={branding.logo_url} items={navItems} lightAfterHero={look.skin === "apple"} />
+      <EventNav name={event.name} logo={branding.logo_url} items={navItems} lightAfterHero={look.skin === "light"} />
 
-      {look.skin === "apple" ? (
+      {look.skin === "light" ? (
         <main id="conteudo" className="relative z-[1]">
           {visible.filter((s) => s.type === "hero").map((s) =>
             look.posterHero ? <PosterHero key={s.id} bundle={bundle} section={s} poster={look.posterHero} /> : <Hero key={s.id} bundle={bundle} section={s} />,
           )}
-          <AppleBody bundle={bundle} sections={visible.filter((s) => s.type !== "hero")} />
+          <LightBody bundle={bundle} sections={visible.filter((s) => s.type !== "hero")} />
         </main>
       ) : (
         <>
