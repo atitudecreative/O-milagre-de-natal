@@ -37,7 +37,7 @@ export function OpportunityShowcase({ items }: { items: OpportunityRow[] }) {
         <AnimatePresence mode="wait">
           <motion.div key={o.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }} className="flex flex-col gap-8">
             {o.image_url ? (
-              <div className="relative aspect-[16/9] overflow-hidden bg-[var(--lt-band)]">
+              <div className="relative aspect-[16/9] overflow-hidden bg-[var(--lt-band)] md:aspect-[2/1]">
                 <EvImage src={o.image_url} alt="" fill sizes="(min-width: 768px) 820px, 100vw" quality={80} className="object-cover" />
               </div>
             ) : null}

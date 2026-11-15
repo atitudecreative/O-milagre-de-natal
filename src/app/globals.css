@@ -501,3 +501,47 @@ select.adm-input {
 .lt-table tbody tr:hover td.lt-col-hl { background: rgba(168, 100, 47, 0.11); }
 .lt-scroll-x { scrollbar-width: none; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
 .lt-scroll-x::-webkit-scrollbar { display: none; }
+
+/* =============================================================================
+   Apresentação em slides (skin "deck")
+   ============================================================================= */
+html.deck-snap { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html.deck-snap { scroll-behavior: auto; } }
+.deck-slide { position: relative; min-height: 100svh; scroll-snap-align: start; scroll-snap-stop: always; overflow: hidden; isolation: isolate; }
+
+/* Zoom lento (Ken Burns) no slide ativo */
+.deck-kb { transform: scale(1); transition: transform 0.9s var(--ease-out-expo); will-change: transform; }
+.deck-slide[data-active="true"] .deck-kb { transform: scale(1.06); transition: transform 12s linear; }
+@media (prefers-reduced-motion: reduce) { .deck-slide[data-active="true"] .deck-kb { transform: none; } }
+
+/* Entrada dos elementos de cada slide */
+.deck-in { opacity: 0; transform: translateY(28px); transition: opacity 0.9s var(--ease-out-expo), transform 1.1s var(--ease-out-expo); transition-delay: calc(var(--d, 0) * 90ms + 120ms); }
+.deck-slide[data-active="true"] .deck-in { opacity: 1; transform: none; }
+.deck-slide[data-seen="true"] .deck-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .deck-in { opacity: 1; transform: none; transition: none; } }
+
+/* Variante escura dos componentes claros (ingressos, vitrine, tabela, formulário) */
+.lt.lt-dark {
+  --lt-paper: #0f1217;
+  --lt-band: #171b22;
+  --lt-ink: #f3e9dc;
+  --lt-muted: #a6a9b0;
+  --lt-faint: #7d828a;
+  --lt-rule: rgba(243, 233, 220, 0.14);
+  --lt-rule-strong: rgba(243, 233, 220, 0.3);
+  --lt-copper: #e3a873;
+  --lt-copper-cta: #c98b57;
+  background: transparent;
+  color: var(--lt-ink);
+}
+.lt.lt-dark .lt-btn { background: var(--lt-ink); color: #13171d; }
+.lt.lt-dark .lt-btn:hover, .lt.lt-dark .lt-btn-copper { background: var(--lt-copper-cta); color: #13171d; }
+.lt.lt-dark .ev-btn { background: var(--lt-ink); color: #13171d; }
+.lt.lt-dark .ev-btn:hover { background: var(--lt-copper-cta); }
+.lt.lt-dark .lt-col-hl { background: rgba(201, 139, 87, 0.12); }
+.lt.lt-dark .lt-table tbody tr:hover td { background: rgba(243, 233, 220, 0.04); }
+.lt.lt-dark .lt-table tbody tr:hover td.lt-col-hl { background: rgba(201, 139, 87, 0.18); }
+.lt.lt-dark select.ev-input option { color: #111; }
+.lt.lt-dark ::selection { background: #c98b57; color: #13171d; }
+.lt-table-compact th, .lt-table-compact td { padding-top: 11px; padding-bottom: 11px; }
+.deck-slide[data-active="true"] .deck-kb-soft { transform: scale(1.025); }

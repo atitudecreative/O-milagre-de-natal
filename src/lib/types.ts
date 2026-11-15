@@ -97,6 +97,14 @@ export type AudienceDatum = { label: string; value: number; code?: string };
 
 export type EventSponsorWithBrand = EventSponsorRow & { sponsor: SponsorRow };
 
+/** Um slide da apresentação. "image" usa uma página pronta (ex.: do media kit). */
+export type DeckSlide =
+  | { kind: "poster"; label: string }
+  | { kind: "image"; label: string; id?: string; src: string; alt: string; text: string }
+  | PanelSlide;
+/** Slide interativo montado pela página (sessões, formatos, cotas, formulário). */
+export type PanelSlide = { kind: "sessions" | "opportunities" | "tiers" | "form"; label: string; id?: string; bg?: string; title?: string; body?: string };
+
 /** Ajustes visuais opcionais por evento (além das cores e fontes). */
 export type EventLook = {
   /** Arte oficial usada como abertura (o título já faz parte da imagem). */
@@ -107,8 +115,13 @@ export type EventLook = {
   starfield?: boolean;
   /** Ornamento de arco com estrela (vitral) nas chamadas. */
   archOrnament?: boolean;
-  /** "light": tudo depois da abertura claro e editorial (fotos em tela cheia, réguas finas). */
-  skin?: "editorial" | "light";
+  /**
+   * "light": tudo depois da abertura claro e editorial.
+   * "deck": a página vira uma apresentação de slides em tela cheia (ver `slides`).
+   */
+  skin?: "editorial" | "light" | "deck";
+  /** Slides da apresentação (skin "deck"), na ordem. */
+  slides?: DeckSlide[];
   /** Endereço completo exibido junto às datas (pele clara). */
   address?: string;
   /** Texto sobre o local, exibido junto ao endereço. */
