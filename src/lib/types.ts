@@ -52,9 +52,9 @@ export type GrandeurSettings = {
   aftermovie_poster?: string | null;
   aftermovie_title?: string | null;
   statement?: string | null;
-  /** Destaques curtos do espetáculo (pele Apple). */
+  /** Destaques curtos do espetáculo (pele clara). */
   highlights?: { title: string; description?: string }[];
-  /** Título da galeria de fotos (pele Apple). */
+  /** Título da galeria de fotos (pele clara). */
   gallery_title?: string | null;
 };
 export type AudienceSettings = { statement?: string | null };
@@ -101,9 +101,9 @@ export type EventLook = {
   starfield?: boolean;
   /** Ornamento de arco com estrela (vitral) nas chamadas. */
   archOrnament?: boolean;
-  /** "apple": tudo depois da abertura em estilo galeria branca e cartões arredondados. */
-  skin?: "editorial" | "apple";
-  /** Endereço completo exibido junto às datas (pele Apple). */
+  /** "light": tudo depois da abertura claro e editorial (fotos em tela cheia, réguas finas). */
+  skin?: "editorial" | "light";
+  /** Endereço completo exibido junto às datas (pele clara). */
   address?: string;
   /** Texto sobre o local, exibido junto ao endereço. */
   venueNote?: string;

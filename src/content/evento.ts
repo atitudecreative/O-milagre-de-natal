@@ -67,7 +67,7 @@ export const EVENTO = bundle({
   }),
 
   look: {
-    skin: "apple", // abertura com a arte; o restante em estilo galeria branca
+    skin: "light", // abertura com a arte; o restante claro e editorial
     address: "Rua Sylvio da Rocha Pollis, 751 — Barra da Tijuca, Rio de Janeiro",
     venueNote: "Este ano, o Musical de Natal acontece em um local preparado para proporcionar uma experiência única e inesquecível para toda a família.",
     posterHero: {
@@ -124,7 +124,7 @@ export const EVENTO = bundle({
       eyebrow: "Cotas de patrocínio",
       title: "Escolha como sua marca participa.",
       body: "Três cotas com contrapartidas definidas. Fale com a equipe para montar a melhor proposta.",
-      settings: { note: "Valores conforme media kit da Striker Produções. Condições finais definidas em proposta comercial." },
+      settings: { note: "Contrapartidas conforme media kit da Striker Produções. Condições finais definidas em proposta comercial." },
     }],
     ["cta", {
       eyebrow: "Patrocine O Milagre do Natal",
@@ -150,8 +150,8 @@ export const EVENTO = bundle({
   media: media([
     { url: "/fotos/familias.webp", alt: "Famílias sorrindo na plateia sob uma chuva de confete", caption: "Um espetáculo que encanta famílias.", in_gallery: true, featured: true, credit: "Striker Produções" },
     { url: "/fotos/elenco.webp", alt: "Elenco do musical no palco com cenário de floresta iluminada e neve", caption: "Elenco em cena nos especiais de fim de ano de 2025.", in_gallery: true, credit: "Striker Produções" },
-    { url: "/fotos/palco.webp", alt: "Palco com painéis de LED, iluminação e faíscas diante do público", caption: "Telões de LED, luz e efeitos especiais.", in_gallery: true, credit: "Striker Produções" },
     { url: "/fotos/presepio.webp", alt: "Cena do presépio com Maria, José, o menino Jesus, pastores e animais", caption: "A cena do presépio de O Milagre do Natal.", in_gallery: true },
+    { url: "/fotos/palco.webp", alt: "Palco com painéis de LED, iluminação e faíscas diante do público", caption: "Telões de LED, luz e efeitos especiais.", in_gallery: true, credit: "Striker Produções" },
     { url: "/fotos/outdoor.webp", alt: "Outdoor com a arte da campanha O Milagre do Natal ao entardecer", caption: "Campanha O Milagre do Natal.", in_gallery: true },
   ]),
 
@@ -174,11 +174,11 @@ export const EVENTO = bundle({
   // Cotas — valores e contrapartidas do media kit
   // --------------------------------------------------------------------------
   tiers: tiers([
-    { name: "Bronze", tagline: "Presença digital e experiência VIP.", price: 10000, show_price: true,
+    { name: "Bronze", tagline: "Presença digital e experiência VIP.", price: 4000, show_price: true,
       deliverables: ["Marca nas comunicações digitais", "Citação da marca durante o evento", "Área VIP para 20 convidados", "Sala VIP com coffee break", "Valet de estacionamento para 1 carro"] },
-    { name: "Prata", tagline: "Visibilidade no telão e ação no evento.", price: 15000, show_price: true,
+    { name: "Prata", tagline: "Visibilidade no telão e ação no evento.", price: 6000, show_price: true,
       deliverables: ["Marca em matérias digitais", "Presença no telão de LED", "Citação da marca durante as sessões", "Área VIP para 30 convidados", "Valet de estacionamento para 3 carros", "Sala VIP com coffee break", "Ação de divulgação da marca durante o evento"] },
-    { name: "Ouro", tagline: "A presença mais completa no musical.", price: 25000, show_price: true, highlight: true,
+    { name: "Ouro", tagline: "A presença mais completa no musical.", price: 10000, show_price: true, highlight: true,
       deliverables: ["Marca em todos os materiais oficiais", "Presença no LED durante as sessões de forma exclusiva", "Citação da marca no musical (sorteios e demais ações)", "Área VIP para 50 convidados por sessão", "Valet de estacionamento para 5 carros", "Sala VIP com coffee break", "Visita à área backstage do elenco", "Gravação de conteúdo durante o musical com marca vinculada e pós-musical", "Ação de divulgação durante o evento", "Stand de divulgação no musical"] },
   ]),
 
