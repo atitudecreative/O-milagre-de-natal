@@ -12,7 +12,8 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["@react-pdf/renderer", "sharp"],
   images: {
     formats: ["image/avif", "image/webp"],
-    qualities: [60, 75, 85],
+    // Next 16 recusa (erro 400) qualidades fora desta lista em produção.
+    qualities: [50, 60, 75, 80, 82, 85, 90],
     // Para usar fotos de outro domínio, adicione-o aqui.
     remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],
   },

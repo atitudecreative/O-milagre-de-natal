@@ -507,7 +507,7 @@ select.adm-input {
    ============================================================================= */
 html.deck-snap { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html.deck-snap { scroll-behavior: auto; } }
-.deck-slide { position: relative; min-height: 100svh; scroll-snap-align: start; scroll-snap-stop: always; overflow: hidden; isolation: isolate; }
+.deck-slide { position: relative; overflow: hidden; isolation: isolate; }
 
 /* Zoom lento (Ken Burns) no slide ativo */
 .deck-kb { transform: scale(1); transition: transform 0.9s var(--ease-out-expo); will-change: transform; }
