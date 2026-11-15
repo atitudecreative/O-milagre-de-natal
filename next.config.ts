@@ -11,7 +11,9 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   serverExternalPackages: ["@react-pdf/renderer", "sharp"],
   images: {
-    formats: ["image/avif", "image/webp"],
+    // As fotos já estão comprimidas em webp. O otimizador do Next derrubava a
+    // instância do Render (502) ao processar várias imagens ao mesmo tempo.
+    unoptimized: true,
     // Next 16 recusa (erro 400) qualidades fora desta lista em produção.
     qualities: [50, 60, 75, 80, 82, 85, 90],
     // Para usar fotos de outro domínio, adicione-o aqui.
