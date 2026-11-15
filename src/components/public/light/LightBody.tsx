@@ -154,7 +154,7 @@ function Filmstrip({ title, items }: { title?: string | null; items: MediaRow[] 
 const WEEKDAY = new Intl.DateTimeFormat("pt-BR", { weekday: "long", timeZone: "UTC" });
 const MONTH = new Intl.DateTimeFormat("pt-BR", { month: "long", timeZone: "UTC" });
 
-function days(start?: string | null, end?: string | null) {
+export function days(start?: string | null, end?: string | null) {
   if (!start) return [];
   const out: Date[] = [];
   const d = new Date(`${start}T00:00:00Z`);
@@ -192,7 +192,7 @@ function AudienceRow({ m }: { m: MetricRow }) {
   );
 }
 
-function Ticket({ d, i, total, event }: { d: Date; i: number; total: number; event: EventBundle["event"] }) {
+export function Ticket({ d, i, total, event }: { d: Date; i: number; total: number; event: EventBundle["event"] }) {
   return (
     <Reveal as="li" delay={i * 0.06} className="lt-ticket flex flex-col">
       <div className="flex flex-col gap-1 px-4 pb-5 pt-5 md:px-6 md:pb-6 md:pt-6">
@@ -280,13 +280,13 @@ function Opportunities({ bundle, section }: { bundle: EventBundle; section: Sect
 }
 
 /* ---------- Cotas ---------- */
-function Cell({ value }: { value: string }) {
+export function Cell({ value }: { value: string }) {
   if (value === "✓") return <span aria-label="Incluído" className="inline-block h-[9px] w-[16px] -translate-y-[2px] -rotate-45 border-b-2 border-l-2 border-[var(--lt-ink)]" />;
   if (value === "—" || value === "") return <span aria-label="Não incluído" className="text-[var(--lt-faint)]">—</span>;
   return <span className="lt-small font-medium">{value}</span>;
 }
 
-function TierHead({ t }: { t: TierRow }) {
+export function TierHead({ t }: { t: TierRow }) {
   return (
     <div className="flex flex-col gap-1">
       <span className={`lt-label ${t.highlight ? "lt-copper" : ""}`}>{t.highlight ? "Mais completa" : "Cota"}</span>
@@ -296,7 +296,7 @@ function TierHead({ t }: { t: TierRow }) {
   );
 }
 
-function TierButton({ t }: { t: TierRow }) {
+export function TierButton({ t }: { t: TierRow }) {
   const soldOut = t.quantity_total != null && t.quantity_sold >= t.quantity_total;
   if (soldOut) return <span className="lt-fine">Comercializada</span>;
   return (

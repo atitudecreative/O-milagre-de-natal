@@ -67,7 +67,22 @@ export const EVENTO = bundle({
   }),
 
   look: {
-    skin: "light", // abertura com a arte; o restante claro e editorial
+    // "deck": a página é uma apresentação de slides em tela cheia.
+    skin: "deck",
+    slides: [
+      { kind: "poster", label: "O Milagre do Natal" },
+      { kind: "image", id: "o-evento", label: "Um espetáculo que encanta famílias", src: "/kit/familias.webp", alt: "Famílias sorrindo na plateia sob chuva de confete, com o título Um espetáculo que encanta famílias", text: "Um espetáculo que encanta famílias. Um presente de Natal para o Rio de Janeiro." },
+      { kind: "image", label: "STK Produções apresenta", src: "/kit/apresenta.webp", alt: "Palco com painéis de LED e iluminação, com o texto STK Produções apresenta", text: "STK Produções apresenta O Milagre do Natal." },
+      { kind: "image", label: "A campanha", src: "/kit/outdoor.webp", alt: "Outdoor com a arte de O Milagre do Natal ao entardecer", text: "A campanha O Milagre do Natal, apresentada pela Striker Produções." },
+      { kind: "image", id: "numeros", label: "+100 mil pessoas em 2025", src: "/kit/publico-2025.webp", alt: "Palco iluminado com o texto Temos muitos motivos para comemorar: os especiais de fim de ano foram um sucesso em 2025, mais de 100 mil pessoas assistiram o Musical de Natal", text: "Temos muitos motivos para comemorar: os especiais de fim de ano foram um sucesso em 2025. Mais de 100 mil pessoas assistiram ao Musical de Natal." },
+      { kind: "image", label: "Expectativa: +100 mil pessoas", src: "/kit/expectativa.webp", alt: "Palco com luzes e faíscas e o texto Expectativa de público: mais de 100 mil pessoas", text: "Expectativa de público: mais de 100 mil pessoas." },
+      { kind: "image", label: "Uma oportunidade estratégica", src: "/kit/oportunidade.webp", alt: "Coral no palco com o texto Uma oportunidade estratégica de se conectar com um público que busca inspiração e valores familiares", text: "Uma oportunidade estratégica de se conectar com um público que busca inspiração e valores familiares em um momento de celebração e renovação." },
+      { kind: "image", label: "Um local muito especial", src: "/kit/local.webp", alt: "Elenco no palco com cenário de floresta e neve e o texto Este ano, nosso Musical de Natal acontecerá em um local muito especial", text: "Este ano, nosso Musical de Natal acontecerá em um local muito especial, preparado para proporcionar uma experiência única e inesquecível para toda a família." },
+      { kind: "sessions", label: "Sessões", title: "Quatro noites de espetáculo.", body: "De sábado a terça, 12 a 15 de dezembro, na Igreja Batista Atitude, Barra da Tijuca." },
+      { kind: "opportunities", id: "oportunidades", label: "Oportunidades", title: "Sua marca presente em cada sessão." },
+      { kind: "tiers", id: "cotas", label: "Cotas", title: "Escolha como sua marca participa.", body: "Compare o que cada cota entrega.", bg: "/kit/bronze-bg.webp" },
+      { kind: "form", id: "interesse", label: "Patrocine", bg: "/kit/familias.webp" },
+    ],
     address: "Rua Sylvio da Rocha Pollis, 751 — Barra da Tijuca, Rio de Janeiro",
     venueNote: "Este ano, o Musical de Natal acontece em um local preparado para proporcionar uma experiência única e inesquecível para toda a família.",
     posterHero: {
