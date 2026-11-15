@@ -49,7 +49,7 @@ export function EventPage({ bundle, preview = false }: { bundle: EventBundle; pr
   const { event, branding } = bundle;
   const sections = bundle.sections.filter((s) => s.enabled).sort((a, b) => a.position - b.position);
   const visible = sections.filter((s) => s.type !== "footer" && hasContent(bundle, s));
-  const fonts = googleFontsHref([branding.font_heading, branding.font_body, ...(bundle.look?.skin === "light" ? ["Inter"] : [])]);
+  const fonts = googleFontsHref([branding.font_heading, branding.font_body, ...(bundle.look?.skin === "light" ? ["Inter", "Instrument Sans"] : [])]);
   const dark = luminance(branding.color_background) < 0.35;
   const look = bundle.look ?? {};
 

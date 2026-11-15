@@ -52,6 +52,8 @@ export type GrandeurSettings = {
   aftermovie_poster?: string | null;
   aftermovie_title?: string | null;
   statement?: string | null;
+  /** Trechos da frase de destaque exibidos em cobre. */
+  statement_highlights?: string[];
   /** Destaques curtos do espetáculo (pele clara). */
   highlights?: { title: string; description?: string }[];
   /** Título da galeria de fotos (pele clara). */
@@ -63,7 +65,11 @@ export type ResultsSettings = {
   previous_edition_label?: string | null;
   show_comparison?: boolean;
 };
-export type TiersSettings = { note?: string | null };
+export type TiersSettings = {
+  note?: string | null;
+  /** Tabela comparativa: uma linha por contrapartida, um valor por cota (na ordem das cotas). */
+  comparison?: { label: string; values: string[] }[];
+};
 export type SponsorsSettings = { show_marquee?: boolean };
 export type NextEditionItem = { title: string; description?: string; image_url?: string | null };
 export type NextEditionSettings = {

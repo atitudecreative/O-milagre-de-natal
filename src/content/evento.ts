@@ -102,6 +102,7 @@ export const EVENTO = bundle({
       body: "Um presente de Natal para o Rio de Janeiro. Música, cenário e emoção para quem vem pela primeira vez — e para quem volta todo ano.",
       settings: {
         statement: "Uma oportunidade estratégica de se conectar com um público que busca inspiração e valores familiares em um momento de celebração e renovação.",
+        statement_highlights: ["inspiração e valores", "celebração e renovação"],
         highlights: [
           { title: "Inspiração", description: "A história do nascimento de Jesus contada no palco, com música ao vivo, elenco e cenografia." },
           { title: "Valores familiares", description: "Um programa para pais, filhos e avós viverem juntos — o público que sua marca quer encontrar." },
@@ -123,8 +124,23 @@ export const EVENTO = bundle({
     ["tiers", {
       eyebrow: "Cotas de patrocínio",
       title: "Escolha como sua marca participa.",
-      body: "Três cotas com contrapartidas definidas. Fale com a equipe para montar a melhor proposta.",
-      settings: { note: "Contrapartidas conforme media kit da Striker Produções. Condições finais definidas em proposta comercial." },
+      body: "Compare o que cada cota entrega e escolha a presença ideal para a sua marca.",
+      settings: {
+        note: "Contrapartidas conforme media kit da Striker Produções. Condições finais definidas em proposta comercial.",
+        // Uma linha por contrapartida; valores na ordem das cotas (Bronze, Prata, Ouro). "✓" = incluído, "—" = não incluído.
+        comparison: [
+          { label: "Marca na comunicação", values: ["Digital", "Matérias digitais", "Todos os materiais oficiais"] },
+          { label: "Telão de LED nas sessões", values: ["—", "✓", "Exclusivo"] },
+          { label: "Citação da marca", values: ["No evento", "Nas sessões", "Sorteios e ações"] },
+          { label: "Área VIP", values: ["20 convidados", "30 convidados", "50 por sessão"] },
+          { label: "Sala VIP com coffee break", values: ["✓", "✓", "✓"] },
+          { label: "Valet de estacionamento", values: ["1 carro", "3 carros", "5 carros"] },
+          { label: "Ação de divulgação no evento", values: ["—", "✓", "✓"] },
+          { label: "Stand de divulgação", values: ["—", "—", "✓"] },
+          { label: "Visita ao backstage do elenco", values: ["—", "—", "✓"] },
+          { label: "Gravação de conteúdo com a marca", values: ["—", "—", "✓"] },
+        ],
+      },
     }],
     ["cta", {
       eyebrow: "Patrocine O Milagre do Natal",
@@ -163,11 +179,11 @@ export const EVENTO = bundle({
   // Oportunidades — formatos que constam nas cotas do media kit
   // --------------------------------------------------------------------------
   opportunities: opportunities([
-    { category: "audiovisual", title: "Telão de LED", description: "Sua marca no telão de LED durante as sessões — com exclusividade na cota Ouro.", deliverables: ["Presença no telão de LED (Prata)", "Presença exclusiva no LED durante as sessões (Ouro)"] },
-    { category: "experience", title: "Área VIP e sala VIP", description: "Receba clientes e convidados com conforto, coffee break e valet de estacionamento.", deliverables: ["Área VIP de 20 a 50 convidados", "Sala VIP com coffee break", "Valet de estacionamento"] },
-    { category: "activation", title: "Ações durante o evento", description: "Citação da marca nas sessões, sorteios e ações de divulgação com o público presente.", deliverables: ["Citação da marca durante as sessões", "Sorteios e demais ações (Ouro)", "Ação de divulgação da marca"] },
-    { category: "digital_media", title: "Comunicação e conteúdo", description: "Presença nas comunicações digitais e em conteúdo gravado durante e depois do musical.", deliverables: ["Marca nas comunicações e matérias digitais", "Marca em todos os materiais oficiais (Ouro)", "Gravação de conteúdo com marca vinculada (Ouro)"] },
-    { category: "booth", title: "Stand e backstage", description: "Um stand de divulgação no musical e uma visita à área de backstage do elenco.", deliverables: ["Stand de divulgação no musical (Ouro)", "Visita à área backstage do elenco (Ouro)"] },
+    { category: "audiovisual", title: "Telão de LED", image_url: "/fotos/palco.webp", description: "Sua marca no telão de LED durante as sessões — com exclusividade na cota Ouro.", deliverables: ["Presença no telão de LED (Prata)", "Presença exclusiva no LED durante as sessões (Ouro)"] },
+    { category: "experience", title: "Área VIP e sala VIP", image_url: "/fotos/presepio.webp", description: "Receba clientes e convidados com conforto, coffee break e valet de estacionamento.", deliverables: ["Área VIP de 20 a 50 convidados", "Sala VIP com coffee break", "Valet de estacionamento"] },
+    { category: "activation", title: "Ações durante o evento", image_url: "/fotos/familias.webp", description: "Citação da marca nas sessões, sorteios e ações de divulgação com o público presente.", deliverables: ["Citação da marca durante as sessões", "Sorteios e demais ações (Ouro)", "Ação de divulgação da marca"] },
+    { category: "digital_media", title: "Comunicação e conteúdo", image_url: "/fotos/outdoor.webp", description: "Presença nas comunicações digitais e em conteúdo gravado durante e depois do musical.", deliverables: ["Marca nas comunicações e matérias digitais", "Marca em todos os materiais oficiais (Ouro)", "Gravação de conteúdo com marca vinculada (Ouro)"] },
+    { category: "booth", title: "Stand e backstage", image_url: "/fotos/elenco.webp", description: "Um stand de divulgação no musical e uma visita à área de backstage do elenco.", deliverables: ["Stand de divulgação no musical (Ouro)", "Visita à área backstage do elenco (Ouro)"] },
   ]),
 
   // --------------------------------------------------------------------------
