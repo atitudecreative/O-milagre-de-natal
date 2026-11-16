@@ -14,3 +14,6 @@ services:
         value: "1"
       - key: NEXT_PUBLIC_SITE_URL
         sync: false
+      # Endereço do webhook do Make que recebe os leads do formulário (opcional).
+      - key: MAKE_WEBHOOK_URL
+        sync: false

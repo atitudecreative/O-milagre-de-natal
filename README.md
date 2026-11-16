@@ -8,7 +8,7 @@ O conteúdo atual é um evento **fictício** de demonstração (*Solarmar Festiv
 
 ## O que tem
 - **Página única** (`/`) com 11 seções, animações, galeria em tela cheia, aftermovie, gráficos de público e comparativo entre edições. Tem layout próprio para celular: menu em tela cheia, barra fixa "Quero ser patrocinador" e cotas em carrossel.
-- **Formulário de interesse:** valida os campos e abre o **WhatsApp do time comercial com a mensagem pronta** (ou o e-mail, se não houver WhatsApp). Ao clicar em "Tenho interesse" numa cota, ela já vem selecionada. Nenhum dado é guardado no site.
+- **Formulário de interesse:** valida os campos e envia o lead para um **webhook do Make** (veja abaixo). Se o webhook não estiver configurado ou falhar, abre o WhatsApp do time comercial com a mensagem pronta (ou o e-mail). Ao clicar em "Quero a cota X", ela já vem selecionada. Nenhum dado é guardado no site.
 - **Apresentação em PDF** (`/apresentacao.pdf`), gerada automaticamente a partir do mesmo conteúdo.
 - **Política de privacidade** (`/privacidade`), aviso de cookies e Meta Pixel / Google Analytics / Tag Manager opcionais (só carregam com o aceite do visitante).
 - **SEO:** metadados, imagem de compartilhamento gerada automaticamente, sitemap, robots e dados estruturados.
@@ -32,6 +32,16 @@ Abra `src/content/evento.ts`. Cada bloco está comentado:
 
 Ao trocar pelo evento real, mude `is_demo` para `false` e use apenas números verdadeiros.
 
+## Recebendo os leads no Make
+1. No Make, crie um cenário começando por **Webhooks → Custom webhook** e copie o endereço gerado.
+2. No Render, em **Environment**, crie a variável `MAKE_WEBHOOK_URL` com esse endereço e salve (o Render publica de novo).
+3. No Make, clique em **Redetermine data structure**, envie um teste pelo formulário do site e o Make reconhece os campos.
+4. Ligue os próximos módulos: Google Sheets (adicionar linha), Gmail/e-mail (aviso ao comercial), CRM etc.
+
+Campos enviados (JSON): `evento`, `nome`, `empresa`, `cargo`, `email`, `telefone`, `segmento`, `interesse`, `cota`, `mensagem`, `aceita_novidades`, `consentimento`, `origem`, `pagina`, `utm_source`, `utm_medium`, `utm_campaign`, `enviado_em`.
+
+O endereço do webhook fica só no servidor. O envio tem campo anti-robô e limite de 5 envios por IP a cada 10 minutos.
+
 ## Rodando localmente
 
 ```bash
@@ -49,7 +59,7 @@ O repositório tem um `render.yaml`. Use **New → Blueprint** e aponte para o r
 - Build: `npm ci && npm run build`
 - Start: `npm start`
 
-Nenhuma variável é obrigatória. Opcionalmente, defina `NEXT_PUBLIC_SITE_URL` com o domínio final (por padrão é usado o endereço do próprio Render).
+Nenhuma variável é obrigatória. Defina `MAKE_WEBHOOK_URL` para receber os leads (veja acima) e, opcionalmente, `NEXT_PUBLIC_SITE_URL` com o domínio final (por padrão é usado o endereço do próprio Render).
 
 Também funciona na Vercel sem nenhuma configuração.
 

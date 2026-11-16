@@ -31,7 +31,8 @@ function maskPhone(v: string) {
 }
 
 export function LeadForm({ eventId, eventName, whatsapp, contactEmail, tiers, interests, successMessage, disabled, buttonLabel }: Props) {
-  const [state, setState] = useState<"idle" | "done">("idle");
+  const [state, setState] = useState<"idle" | "sending" | "done">("idle");
+  const [via, setVia] = useState<"site" | "app">("site");
   const [errors, setErrors] = useState<Errors>({});
   const [serverError, setServerError] = useState<string | null>(null);
   const [tierId, setTierId] = useState("");
@@ -101,9 +102,44 @@ export function LeadForm({ eventId, eventName, whatsapp, contactEmail, tiers, in
       return;
     }
 
-    // Sem banco de dados: o contato segue pelo WhatsApp (ou e-mail) do time comercial,
-    // com a mensagem pronta. Nada é armazenado neste site.
     const tierName = tierId ? tiers.find((t) => t.id === tierId)?.name : undefined;
+    setServerError(null);
+
+    // 1) Envio direto: o servidor repassa o lead ao webhook (Make).
+    setState("sending");
+    try {
+      const qs = new URLSearchParams(window.location.search);
+      const res = await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...payload,
+          tier: tierName ?? "",
+          origin: origin ?? "",
+          page: window.location.href,
+          utm_source: qs.get("utm_source") ?? "",
+          utm_medium: qs.get("utm_medium") ?? "",
+          utm_campaign: qs.get("utm_campaign") ?? "",
+          website: String(fd.get("website") ?? ""),
+        }),
+      });
+      if (res.ok) {
+        track("form_submit", tierName ?? origin);
+        setVia("site");
+        setState("done");
+        return;
+      }
+      if (res.status === 429) {
+        setState("idle");
+        setServerError("Muitos envios seguidos. Aguarde alguns minutos e tente de novo.");
+        return;
+      }
+    } catch {
+      // Sem conexão com o servidor: segue para o plano B abaixo.
+    }
+    setState("idle");
+
+    // 2) Plano B: abre o WhatsApp (ou e-mail) do time comercial com a mensagem pronta.
     const lines = [
       `Olá! Tenho interesse em patrocinar ${eventName}.`,
       "",
@@ -123,21 +159,24 @@ export function LeadForm({ eventId, eventName, whatsapp, contactEmail, tiers, in
       ? `https://wa.me/${whatsapp}?text=${text}`
       : `mailto:${contactEmail ?? ""}?subject=${encodeURIComponent(`Patrocínio — ${eventName}`)}&body=${text}`;
     if (!whatsapp && !contactEmail) {
-      setServerError("O contato comercial ainda não foi configurado.");
+      setServerError("Não foi possível enviar agora. Tente novamente em instantes.");
       return;
     }
     track("form_submit", tierName ?? origin);
     window.open(url, whatsapp ? "_blank" : "_self", "noopener");
+    setVia("app");
     setState("done");
   }
 
   if (state === "done") {
     return (
       <div role="status" className="animate-[rise_0.9s_var(--ease-out-expo)_both] py-10">
-        <p className="ev-eyebrow mb-6">Quase lá</p>
+        <p className="ev-eyebrow mb-6">{via === "site" ? "Interesse recebido" : "Quase lá"}</p>
         <p className="ev-display text-[clamp(2.4rem,5vw,4.4rem)]">Obrigado.</p>
         <p className="mt-6 max-w-lg text-lg leading-relaxed text-[var(--ev-muted)]">
-          {successMessage || "Nossa equipe comercial vai analisar seu interesse e retornar em até 2 dias úteis."}
+          {via === "app"
+            ? "Confirme o envio da mensagem que abrimos para você. Nossa equipe comercial retorna em até 2 dias úteis."
+            : successMessage || "Nossa equipe comercial vai analisar seu interesse e retornar em até 2 dias úteis."}
         </p>
       </div>
     );
@@ -164,7 +203,11 @@ export function LeadForm({ eventId, eventName, whatsapp, contactEmail, tiers, in
   );
 
   return (
-    <form ref={formRef} onSubmit={onSubmit} noValidate className="grid grid-cols-1 gap-x-8 gap-y-7 sm:grid-cols-2" aria-describedby="lf-required">
+    <form ref={formRef} onSubmit={onSubmit} noValidate className="relative grid grid-cols-1 gap-x-8 gap-y-7 sm:grid-cols-2" aria-describedby="lf-required">
+      <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
+        <label htmlFor="lf-website">Não preencha este campo</label>
+        <input id="lf-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+      </div>
       <div className="sm:col-span-2">
         {label("full_name", "Nome completo")}
         <input {...field("full_name")} className="ev-input" autoComplete="name" required maxLength={120} />
@@ -242,12 +285,11 @@ export function LeadForm({ eventId, eventName, whatsapp, contactEmail, tiers, in
 
       <div className="flex flex-col gap-4 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
         <p id="lf-required" className="ev-micro">* Campos obrigatórios</p>
-        <button type="submit" className="ev-btn w-full sm:w-auto" disabled={disabled}>
-          {buttonLabel || "Enviar interesse"}
+        <button type="submit" className="ev-btn w-full sm:w-auto" disabled={disabled || state === "sending"} aria-busy={state === "sending"}>
+          {state === "sending" ? "Enviando…" : buttonLabel || "Enviar interesse"}
           <span className="ev-btn-arrow" aria-hidden>→</span>
         </button>
       </div>
-      <p className="ev-micro sm:col-span-2">{whatsapp ? "O envio abre o WhatsApp do nosso time comercial com sua mensagem pronta." : "O envio abre seu e-mail com a mensagem pronta."}</p>
     </form>
   );
 }

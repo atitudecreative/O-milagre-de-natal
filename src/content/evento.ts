@@ -42,7 +42,7 @@ export const EVENTO = bundle({
     social_links: [],
     footer_links: [],
     form_interests: ["Cota de patrocínio", "Stand de divulgação", "Ação de divulgação no evento", "Conteúdo e comunicação digital", "Outro formato"],
-    form_success_message: "Abrimos o WhatsApp com sua mensagem pronta. É só enviar — nossa equipe responde em breve.",
+    form_success_message: "Recebemos seus dados. Nossa equipe comercial entra em contato em até 2 dias úteis.",
     seo_title: "O Milagre do Natal — Musical de Natal · Patrocínio",
     seo_description: "Musical de Natal de 12 a 15 de dezembro na Barra da Tijuca. Mais de 100 mil pessoas em 2025. Conheça as cotas de patrocínio.",
     og_image_url: "/kv/og.jpg",
