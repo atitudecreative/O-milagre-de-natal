@@ -6,9 +6,8 @@ import { TrackedLink } from "./TrackedLink";
 
 type Item = { href: string; label: string };
 
-export function EventNav({ name, logo, items, lightAfterHero = false }: { name: string; logo: string | null; items: Item[]; lightAfterHero?: boolean }) {
+export function EventNav({ name, logo, items, lightAfterHero = false, plainType = false }: { name: string; logo: string | null; items: Item[]; lightAfterHero?: boolean; plainType?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const [pastHero, setPastHero] = useState(false);
   const [atForm, setAtForm] = useState(false);
@@ -22,14 +21,11 @@ export function EventNav({ name, logo, items, lightAfterHero = false }: { name: 
   }, []);
 
   useEffect(() => {
-    let last = window.scrollY;
+    // O menu fica sempre visível: esconder ao rolar causava tremidas.
     const onScroll = () => {
       const y = window.scrollY;
       setScrolled(y > 40);
-      setHidden(y > 400 && y > last + 4);
-      if (y < last - 4) setHidden(false);
       setPastHero(y > window.innerHeight * 0.8);
-      last = y;
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -49,9 +45,9 @@ export function EventNav({ name, logo, items, lightAfterHero = false }: { name: 
         Pular para o conteúdo
       </a>
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-[transform,background-color,backdrop-filter] duration-500 ease-[var(--ease-out-expo)] ${
-          hidden && !open ? "-translate-y-full" : ""
-        } ${lightAfterHero && pastHero && !open ? "ev-nav-light" : scrolled ? "bg-[color-mix(in_srgb,var(--ev-bg)_82%,transparent)] backdrop-blur-xl" : ""}`}
+        className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color] duration-300 ${
+          lightAfterHero && pastHero && !open ? "ev-nav-light" : scrolled && !open ? "border-[var(--ev-line)] bg-[color-mix(in_srgb,var(--ev-bg)_97%,transparent)]" : "border-transparent"
+        }`}
       >
         <div className="ev-container flex h-16 items-center justify-between gap-6 md:h-20">
           <a href="#inicio" className="flex min-w-0 items-center gap-3" aria-label={`${name} — início`}>
@@ -95,7 +91,8 @@ export function EventNav({ name, logo, items, lightAfterHero = false }: { name: 
         {open ? (
           <motion.div
             id="ev-menu"
-            className="fixed inset-0 z-40 flex flex-col bg-[var(--ev-bg)] pt-20 lg:hidden"
+            className={`fixed inset-0 z-40 flex flex-col bg-[var(--ev-bg)] pt-20 lg:hidden ${plainType ? "lt lt-dark !fixed !z-40" : ""}`}
+            style={{ background: "var(--ev-bg)" }}
             initial={{ clipPath: "inset(0 0 100% 0)" }}
             animate={{ clipPath: "inset(0 0 0% 0)" }}
             exit={{ clipPath: "inset(0 0 100% 0)" }}
@@ -105,7 +102,7 @@ export function EventNav({ name, logo, items, lightAfterHero = false }: { name: 
               <ul className="border-t border-[var(--ev-line)]">
                 {items.map((i, k) => (
                   <motion.li key={i.href} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 + k * 0.04 }} className="border-b border-[var(--ev-line)]">
-                    <a href={i.href} onClick={() => setOpen(false)} className="ev-display flex items-baseline justify-between py-4 text-4xl">
+                    <a href={i.href} onClick={() => setOpen(false)} className={`ev-display flex items-baseline justify-between py-4 ${plainType ? "text-3xl font-medium tracking-tight" : "text-4xl"}`}>
                       {i.label}
                       <span className="text-sm tabular-nums text-[var(--ev-subtle)]">{String(k + 1).padStart(2, "0")}</span>
                     </a>

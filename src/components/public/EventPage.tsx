@@ -86,7 +86,7 @@ export function EventPage({ bundle, preview = false }: { bundle: EventBundle; pr
         </div>
       ) : null}
 
-      <EventNav name={event.name} logo={branding.logo_url} items={navItems} lightAfterHero={look.skin === "light"} />
+      <EventNav name={event.name} logo={branding.logo_url} items={navItems} lightAfterHero={look.skin === "light"} plainType={look.skin === "light" || look.skin === "deck"} />
 
       {look.skin === "deck" && look.slides?.length ? (
         <main id="conteudo" className="relative z-[1]">
