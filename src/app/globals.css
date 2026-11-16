@@ -551,3 +551,7 @@ html.deck-snap { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
 .tier-bronze .lt-dot::before { background: #c07a4a; }
 .lt.lt-dark .lt-btn-bronze { background: #a8653a; color: #f3e9dc; }
 .lt.lt-dark .lt-btn-bronze:hover { background: #8a4f2c; }
+
+/* Âncoras param abaixo do menu fixo. */
+html { scroll-padding-top: 4rem; }
+@media (min-width: 768px) { html { scroll-padding-top: 5rem; } }
