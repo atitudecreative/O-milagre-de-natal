@@ -5,7 +5,7 @@ import type { AnalyticsEventName } from "@/lib/types";
  * Rastreamento do lado do cliente.
  * - Repassa para GTM/GA4/Meta Pixel apenas se o evento tiver os IDs configurados
  *   E o visitante tiver consentido (LGPD).
- * - A conversão (form_submit) só dispara quando o formulário válido abre o WhatsApp/e-mail.
+ * - A conversão (form_submit) só dispara quando o formulário válido é enviado (ou abre o WhatsApp/e-mail).
  */
 type Config = { eventId: string; enabled: boolean; consent: boolean };
 const cfg: Config = { eventId: "", enabled: false, consent: false };

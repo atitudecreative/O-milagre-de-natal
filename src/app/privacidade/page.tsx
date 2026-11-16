@@ -20,7 +20,7 @@ export default function Privacy() {
         <p>O controlador dos dados é <strong>{controller}</strong>{e.organizer_document ? ` (${e.organizer_document})` : ""}, responsável pelo evento {e.name}.</p>
 
         <h2>Quais dados coletamos</h2>
-        <p>Este site não armazena os dados do formulário. Ao enviar, sua mensagem (nome, empresa, cargo, e-mail, telefone, segmento, interesse, cota e mensagem) é aberta no seu WhatsApp ou no seu aplicativo de e-mail, e só chega até nós quando você confirma o envio.</p>
+        <p>Ao enviar o formulário, seus dados (nome, empresa, cargo, e-mail, telefone, segmento, interesse, cota, mensagem e a página de origem) são encaminhados à equipe comercial do evento por meio de uma ferramenta de automação, usada apenas para registrar e responder o seu contato. O site em si não guarda esses dados. Se o envio automático não estiver disponível, a mensagem é aberta no seu WhatsApp ou no seu aplicativo de e-mail e só chega até nós quando você confirma o envio.</p>
 
         <h2>Para que usamos</h2>
         <ul>
